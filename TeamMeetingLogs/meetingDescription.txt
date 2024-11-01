@@ -1,4 +1,4 @@
 10/28/2024: Created wireframes for each page of the application.
 10/30/2024: Finalized designs of wireframes and standardized them.
 10/31/2024: Followed lab guide to set up basic file structure of project.
-11/1/2024: Created project board and created user stories for 
+11/1/2024: Created project board and created user stories for our first Epic based on Agile workflow.
