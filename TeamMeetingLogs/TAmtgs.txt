@@ -1,2 +1,5 @@
 10/29/2024 - 15 min
   Shared our project plan and figured out the overall layout of our project.
+
+11/4/2024 - 10 min
+  The plan for the week is to at least create the login and register pages, and maybe start the skeleton for the entire project.
