@@ -15,10 +15,39 @@ const hbs = handlebars.create({
     partialsDir: __dirname + '/views/partials',
 });
 
+const dbConfig = {
+  host: 'db', // the database server
+  port: 5432, // the database port
+  database: process.env.POSTGRES_DB, // the database name
+  user: process.env.POSTGRES_USER, // the user account to connect with
+  password: process.env.POSTGRES_PASSWORD, // the password of the user account
+};
+
+const db = pgp(dbConfig);
+
+db.connect()
+    .then(obj => {
+        console.log('Database connection successful'); // you can view this message in the docker compose logs
+        obj.done(); // success, release the connection;
+    })
+    .catch(error => {
+        console.log('ERROR:', error.message || error);
+    });
+
+
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
+
+// initialize session variables
+app.use(
+  session({
+      secret: process.env.SESSION_SECRET,
+      saveUninitialized: false,
+      resave: false,
+  })
+);
 
 app.use(
     bodyParser.urlencoded({
