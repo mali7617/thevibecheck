@@ -1,7 +1,7 @@
 CREATE TABLE USERS (
     user_id INTEGER PRIMARY KEY NOT NULL,
     username VARCHAR(50) NOT NULL,
-    pwd CHAR(60) NOT NULL,
-    user VARCHAR(25)
+    pwd VARCHAR(60) NOT NULL,
+    user_type VARCHAR(25)
 );
 
