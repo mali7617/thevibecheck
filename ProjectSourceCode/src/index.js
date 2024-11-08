@@ -74,30 +74,27 @@ app.get('/register', (req, res) => {
 });
 
 
-  // Register
+// Register
 app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  const hash = await bcrypt.hash(req.body.pwd, 10);
+
   // To-DO: Insert username and hashed password into the 'users' table
-  const { username, password } = req.body;
-
-  // Hash the password using bcrypt
-  bcrypt.hash(password, 10)
-    .then(hash => {
-      const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
-      const values = [username, hash];
-
-      // Execute the database query
-      return db.none(query, values);
-    })
-    .then(() => {
-      // Redirect to login on successful registration
-      res.redirect('/login');
+  db.any(`insert into users values($1, $2);`, [req.body.username, hash])
+    .then(data =>{
+      res.status(200).json({
+        message: 'Success'
+      });
+      // res.redirect('/login');
     })
     .catch(error => {
-      // Log the error and redirect back to register page
-      console.error('Error entering user:', error);
+      console.log(error);
+      res.status(400).json({
+        message: 'Invalid input'
+      });
       res.redirect('/register');
     });
-});
+})
 
 // //Login
 // app.get('/login', (req, res) => {
