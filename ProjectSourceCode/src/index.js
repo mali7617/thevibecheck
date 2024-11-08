@@ -58,45 +58,46 @@ app.use(
 
 
 /*_________API ROUTES_________*/
- app.get('/welcome', (req, res) => {
-   res.json({status: 'success', message: 'Welcome!'});
- });
- app.get('/', (req, res) => {
-     res.redirect('/login'); //this will call the /anotherRoute route in the API
-   });
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+app.get('/', (req, res) => {
+  res.redirect('/login'); //this will call the /anotherRoute route in the API
+});
   
-   app.get('/login', (req, res) => {
-     res.render('pages/login');
-   });
+app.get('/login', (req, res) => {
+  res.render('pages/login');
+});
 
-  app.get('/register', (req, res) => {
-    res.render('pages/register')
-  });
+app.get('/register', (req, res) => {
+  res.render('pages/register')
+});
 
-//   // Register
-// app.post('/register', async (req, res) => {
-//   // To-DO: Insert username and hashed password into the 'users' table
-//   const { username, password } = req.body;
 
-//   // Hash the password using bcrypt
-//   bcrypt.hash(password, 10)
-//     .then(hash => {
-//       const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
-//       const values = [username, hash];
+  // Register
+app.post('/register', async (req, res) => {
+  // To-DO: Insert username and hashed password into the 'users' table
+  const { username, password } = req.body;
 
-//       // Execute the database query
-//       return db.none(query, values);
-//     })
-//     .then(() => {
-//       // Redirect to login on successful registration
-//       res.redirect('/login');
-//     })
-//     .catch(error => {
-//       // Log the error and redirect back to register page
-//       console.error('Error entering user:', error);
-//       res.redirect('/register');
-//     });
-// });
+  // Hash the password using bcrypt
+  bcrypt.hash(password, 10)
+    .then(hash => {
+      const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
+      const values = [username, hash];
+
+      // Execute the database query
+      return db.none(query, values);
+    })
+    .then(() => {
+      // Redirect to login on successful registration
+      res.redirect('/login');
+    })
+    .catch(error => {
+      // Log the error and redirect back to register page
+      console.error('Error entering user:', error);
+      res.redirect('/register');
+    });
+});
 
 // //Login
 // app.get('/login', (req, res) => {
