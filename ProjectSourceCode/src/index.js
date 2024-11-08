@@ -58,9 +58,9 @@ app.use(
 
 
 /*_________API ROUTES_________*/
-app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
-});
+// app.get('/welcome', (req, res) => {
+//   res.json({status: 'success', message: 'Welcome!'});
+// });
 // app.get('/', (req, res) => {
 //     res.redirect('/login'); //this will call the /anotherRoute route in the API
 //   });
@@ -69,9 +69,9 @@ app.get('/welcome', (req, res) => {
 //     res.render('pages/login');
 //   });
 
-//   app.get('/register', (req, res) => {
-//     res.render('pages/register')
-//   });
+  app.get('/register', (req, res) => {
+    res.render('pages/register')
+  });
 
 //   // Register
 // app.post('/register', async (req, res) => {
