@@ -1,7 +1,7 @@
-CREATE TABLE USERS{
-    PRIMARY KEY integer user_id NOT NULL,
-    varchar username NOT NULL,
-    varchar pwd NOT NULL,
-    varchar user,
-},
+CREATE TABLE USERS (
+    user_id INTEGER PRIMARY KEY NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    pwd CHAR(60) NOT NULL,
+    user VARCHAR(25)
+);
 

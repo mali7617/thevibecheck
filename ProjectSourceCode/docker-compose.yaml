@@ -6,7 +6,7 @@ services:
     expose:
       - '5432'
     volumes:
-      - thevibecheck:/var/lib/postgresql/data
+      - group-project:/var/lib/postgresql/data
       - ./src/init_data:/docker-entrypoint-initdb.d
   web:
     image: node:lts
@@ -21,6 +21,6 @@ services:
       - '3000:3000'
     volumes:
       - ./:/repository
-    command: 'npm run testandrun'
+    command: 'npm run testandrun' #TODO: change the command to `npm run testandrun` to run mocha
 volumes:
-  thevibecheck:
+  group-project:

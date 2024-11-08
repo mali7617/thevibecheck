@@ -58,100 +58,102 @@ app.use(
 
 
 /*_________API ROUTES_________*/
-
-app.get('/', (req, res) => {
-    res.redirect('/login'); //this will call the /anotherRoute route in the API
-  });
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+// app.get('/', (req, res) => {
+//     res.redirect('/login'); //this will call the /anotherRoute route in the API
+//   });
   
-  app.get('/login', (req, res) => {
-    res.render('pages/login');
-  });
+//   app.get('/login', (req, res) => {
+//     res.render('pages/login');
+//   });
 
-  app.get('/register', (req, res) => {
-    res.render('pages/register')
-  });
+//   app.get('/register', (req, res) => {
+//     res.render('pages/register')
+//   });
 
-  // Register
-app.post('/register', async (req, res) => {
-  // To-DO: Insert username and hashed password into the 'users' table
-  const { username, password } = req.body;
+//   // Register
+// app.post('/register', async (req, res) => {
+//   // To-DO: Insert username and hashed password into the 'users' table
+//   const { username, password } = req.body;
 
-  // Hash the password using bcrypt
-  bcrypt.hash(password, 10)
-    .then(hash => {
-      const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
-      const values = [username, hash];
+//   // Hash the password using bcrypt
+//   bcrypt.hash(password, 10)
+//     .then(hash => {
+//       const query = 'INSERT INTO users (username, password) VALUES ($1, $2)';
+//       const values = [username, hash];
 
-      // Execute the database query
-      return db.none(query, values);
-    })
-    .then(() => {
-      // Redirect to login on successful registration
-      res.redirect('/login');
-    })
-    .catch(error => {
-      // Log the error and redirect back to register page
-      console.error('Error entering user:', error);
-      res.redirect('/register');
-    });
-});
+//       // Execute the database query
+//       return db.none(query, values);
+//     })
+//     .then(() => {
+//       // Redirect to login on successful registration
+//       res.redirect('/login');
+//     })
+//     .catch(error => {
+//       // Log the error and redirect back to register page
+//       console.error('Error entering user:', error);
+//       res.redirect('/register');
+//     });
+// });
 
-//Login
-app.get('/login', (req, res) => {
-  res.render('pages/login')
-});
+// //Login
+// app.get('/login', (req, res) => {
+//   res.render('pages/login')
+// });
 
-app.post('/login', async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const query = 'select * from users where users.username = $1 LIMIT 1';
-  const values = [username];
+// app.post('/login', async (req, res) => {
+//   const username = req.body.username;
+//   const password = req.body.password;
+//   const query = 'select * from users where users.username = $1 LIMIT 1';
+//   const values = [username];
 
-  try{
-    console.log("Querying for user:", username);
+//   try{
+//     console.log("Querying for user:", username);
 
-    const data = await db.one(query, values);
+//     const data = await db.one(query, values);
 
-    // Now we have the user data
-    const user = {
-      username: data.username,
-      password: data.password // Make sure this is the hashed password from the database
-    };
+//     // Now we have the user data
+//     const user = {
+//       username: data.username,
+//       password: data.password // Make sure this is the hashed password from the database
+//     };
    
-    const match = await bcrypt.compare(password, user.password);
+//     const match = await bcrypt.compare(password, user.password);
 
-    if(!match)
-    {
-      return res.render('pages/login', { message: 'Incorrect username or password' });
-    }
+//     if(!match)
+//     {
+//       return res.render('pages/login', { message: 'Incorrect username or password' });
+//     }
 
-    req.session.user = user;
-    req.session.save();
+//     req.session.user = user;
+//     req.session.save();
 
-    return res.redirect('/discover');
-  } catch(error){
-    console.error("Login error:", error);
-    res.status(500).send("Error Test");
-  }
+//     return res.redirect('/discover');
+//   } catch(error){
+//     console.error("Login error:", error);
+//     res.status(500).send("Error Test");
+//   }
 
-});
+// });
 
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    // Redirect to login if no user in session
-    return res.redirect('/login');
-  }
-  next();
-};
+// const auth = (req, res, next) => {
+//   if (!req.session.user) {
+//     // Redirect to login if no user in session
+//     return res.redirect('/login');
+//   }
+//   next();
+// };
 
-// Apply auth middleware to /discover route
-app.use('/discover', auth);
+// // Apply auth middleware to /discover route
+// app.use('/discover', auth);
 
 
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.render('pages/logout');
-});
+// app.get('/logout', (req, res) => {
+//   req.session.destroy();
+//   res.render('pages/logout');
+// });
 
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
