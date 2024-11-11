@@ -3,3 +3,6 @@
 
 11/4/2024 - 10 min
   The plan for the week is to at least create the login and register pages, and maybe start the skeleton for the entire project.
+
+11/11/2024 - 10 min
+  We planned to work on test cases, add more functional code, and release notes this week.
