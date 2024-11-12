@@ -80,19 +80,19 @@ app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.pwd, 10);
 
   // To-DO: Insert username and hashed password into the 'users' table
-  db.any(`insert into users values($1, $2);`, [req.body.username, hash])
+  db.any(`insert into users(username, pwd) values($1, $2);`, [req.body.username, hash])
     .then(data =>{
       res.status(200).json({
-        message: 'Success'
+        message: "Success"
       });
       // res.redirect('/login');
     })
     .catch(error => {
       console.log(error);
       res.status(400).json({
-        message: 'Invalid input'
+        message: "Invalid input"
       });
-      res.redirect('/register');
+      // res.redirect('/register');
     });
 })
 

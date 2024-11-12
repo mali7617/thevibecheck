@@ -43,7 +43,7 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({username: 'test', pwd: '123'})
+            .send({username: "test", pwd: "123"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.message).to.equals('Success');
@@ -64,7 +64,7 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({username: 1234, pwd: '5678'})
+            .send({username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678"})
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.message).to.equals('Invalid input');
