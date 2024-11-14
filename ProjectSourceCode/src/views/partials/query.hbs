@@ -2,6 +2,7 @@
 var map;
 var service;
 var infowindow;
+const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 function initMap() {
     // begin in sydney, Australia
@@ -15,7 +16,7 @@ function initMap() {
   var request = {
     query: 'Museum of Contemporary Art Australia',
     fields: ['name', 'geometry'],
-    key: ''
+    key: API_KEY
   };
 
   var service = new google.maps.places.PlacesService(map);
