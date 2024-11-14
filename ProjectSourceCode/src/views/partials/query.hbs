@@ -4,16 +4,18 @@ var service;
 var infowindow;
 
 function initMap() {
+    // begin in sydney, Australia
   var sydney = new google.maps.LatLng(-33.867, 151.195);
 
   infowindow = new google.maps.InfoWindow();
 
   map = new google.maps.Map(
       document.getElementById('map'), {center: sydney, zoom: 15});
-
+// how can we safely include an API key here from .ENV with every request?
   var request = {
     query: 'Museum of Contemporary Art Australia',
     fields: ['name', 'geometry'],
+    key: ''
   };
 
   var service = new google.maps.places.PlacesService(map);
