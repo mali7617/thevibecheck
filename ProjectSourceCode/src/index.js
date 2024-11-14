@@ -73,7 +73,10 @@ app.get('/register', (req, res) => {
   res.render('pages/register')
 });
 
-
+app.post('/query'), (req,res) =>{
+  console.log(req);
+  res.done();
+}
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
