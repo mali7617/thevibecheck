@@ -61,22 +61,23 @@ app.use(
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
-app.get('/test', (req, res) => {
-  res.redirect('/login'); //this will call the /anotherRoute route in the API
-});
   
 app.get('/login', (req, res) => {
-  res.render('pages/login');
+  res.render('pages/login')
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register');
+  res.render('pages/register');;
 });
 
-app.get('/query', (req,res) =>{
-  console.log(req);
-  res.done();
+app.get('/test', (req, res) => {
+  res.redirect('/login'); //this will call the /anotherRoute route in the API
+  res.status(302);
 });
+
+
+
+
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
@@ -84,7 +85,7 @@ app.post('/register', async (req, res) => {
 
   // To-DO: Insert username and hashed password into the 'users' table
   db.any(`insert into users(username, pwd) values($1, $2);`, [req.body.username, hash])
-    .then(data => {
+    .then(data =>{
       res.status(200).json({
         message: "Success"
       });
@@ -99,6 +100,10 @@ app.post('/register', async (req, res) => {
     });
 })
 
+// //Login
+// app.get('/login', (req, res) => {
+//   res.render('pages/login')
+// });
 
 // app.post('/login', async (req, res) => {
 //   const username = req.body.username;
