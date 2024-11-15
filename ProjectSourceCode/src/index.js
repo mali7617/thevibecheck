@@ -62,7 +62,9 @@ app.get('/welcome', (req, res) => {
 app.get('/login', (req, res) => {
   res.render('pages/login')
 });
-
+app.get('/map', (req, res) => {
+  res.render('pages/map');
+});
 app.get('/register', (req, res) => {
   res.render('pages/register');;
 });
@@ -71,19 +73,17 @@ app.get('/test', (req, res) => {
   res.redirect('/login');
   res.status(302);
 });
-require('dotenv').config();
 
 app.get('/api/get-google-maps-key', async (req, res) => {
-  await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY }).catch(err => { console.log(err) });
+  require('dotenv').config();
+  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY }).catch(err => { console.log(err) });
+  return keyFetch;
 });
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});
-app.get('/query', (req, res) => {
-  res.redirect('/query');
-
+app.get('/',(req,res)=> { 
+  res.redirect('/login');
 })
+
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
@@ -148,4 +148,3 @@ app.get('/profile', (req, res) => {
 });
 
 module.exports = app.listen(3000);
-console.log('Server is listening on port 3000');

@@ -26,13 +26,12 @@
     }
 
     // Function to make a request to Google Places API
-    function makeRequest(searchKey) {
+    function makeRequest(searchKey,apiKey) {
       var request = {
-        query: 'Happy Nearby America',
         fields: ['name', 'geometry'],
         type: 'food',
         keyword: searchKey,
-        key: API_KEY
+        key: apiKey
       };
 
       var service = new google.maps.places.PlacesService(map);
