@@ -12,7 +12,7 @@ create table moods(
 
 create table locations(
     location_id serial primary key,
-    location_name varchar(50),
+    location_name varchar(50)
 );
 
 create table moods_to_locations(
@@ -20,12 +20,12 @@ create table moods_to_locations(
     location_id int not null references locations(location_id)
 );
 
-create table reviews{
+create table reviews(
     review_id serial primary key,
     user_id int references users(user_id),
     location_id int references locations(location_id),
     mood_id int references moods(mood_id),
     rating int,
     review varchar(250)
-}
+);
 
