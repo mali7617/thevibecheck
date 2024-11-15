@@ -56,6 +56,10 @@ app.use(
 );
 
 /*_________API ROUTES_________*/
+app.get('/', (req, res) => {
+  res.redirect('/register');
+});
+
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -77,20 +81,21 @@ app.get('/test', (req, res) => {
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.pwd, 10);
-
-  db.any(`insert into users(username, pwd) values($1, $2);`, [req.body.username, hash])
-    .then(data =>{
+  const query = 'INSERT INTO users (username, pwd) VALUES ($1, $2);';
+  db.any(query, [
+    req.body.username, 
+    hash
+  ]).then(data => {
+      res.render('pages/login');
       res.status(200).json({
         message: "Success"
       });
-      // res.redirect('/login');
     })
     .catch(error => {
-      console.log(error);
+      res.redirect('/register');
       res.status(400).json({
         message: "Invalid input"
       });
-      // res.redirect('/register');
     });
 })
 
