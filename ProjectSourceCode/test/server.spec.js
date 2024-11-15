@@ -1,6 +1,18 @@
 // ********************** Initialize server **********************************
 
 const server = require('../src/index.js'); //TODO: Make sure the path to your index.js is correctly added
+const pgp = require('pg-promise')();
+const bcrypt = require('bcryptjs');
+
+const dbConfig = {
+    host: 'db', // the database server
+    port: 5432, // the database port
+    database: process.env.POSTGRES_DB, // the database name
+    user: process.env.POSTGRES_USER, // the user account to connect with
+    password: process.env.POSTGRES_PASSWORD, // the password of the user account
+};
+
+const db = pgp(dbConfig);
 
 // ********************** Import Libraries ***********************************
 
@@ -28,18 +40,9 @@ describe('Server!', () => {
 });
 
 // *********************** TODO: WRITE 2 UNIT TESTCASES **************************
-// Example Positive Testcase :
-// API: /add_user
-// Input: {id: 5, name: 'John Doe', dob: '2020-02-20'}
-// Expect: res.status == 200 and res.body.message == 'Success'
-// Result: This test case should pass and return a status 200 along with a "Success" message.
-// Explanation: The testcase will call the /add_user API with the following input
-// and expects the API to return a status of 200 along with the "Success" message.
-
-//We are checking POST /add_user API by passing the user info in in incorrect manner (name cannot be an integer). This test case should pass and return a status 400 along with a "Invalid input" message.
-
+// Positive Testcase /register:
 describe('Testing Add User API', () => {
-    it('positive : /add_user', done => {
+    it('positive : /register', done => {
         chai
             .request(server)
             .post('/register')
@@ -52,15 +55,9 @@ describe('Testing Add User API', () => {
     });
 });
 
-// Example Negative Testcase :
-// API: /add_user
-// Input: {id: 5, name: 10, dob: '2020-02-20'}
-// Expect: res.status == 400 and res.body.message == 'Invalid input'
-// Result: This test case should pass and return a status 400 along with a "Invalid input" message.
-// Explanation: The testcase will call the /add_user API with the following invalid inputs
-// and expects the API to return a status of 400 along with the "Invalid input" message.
+// Negative Testcase /register:
 describe('Testing Add User API', () => {
-    it('Negative : /add_user. Checking invalid name', done => {
+    it('Negative : /register. Checking invalid name', done => {
         chai
             .request(server)
             .post('/register')
@@ -101,6 +98,65 @@ describe('Testing Redirect', () => {
                 //res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
                 res.should.have.header('location', '/login');
                 done();
+        });
+    });
+});
+
+describe('Profile Route Tests', () => {
+    let agent;
+    const testUser = {
+        username: "testuser",
+        pwd: "testpass123",
+    };
+
+    before(async () => {
+        // Clear users table and create test user
+        await db.query('TRUNCATE TABLE users CASCADE');
+        const hashedPassword = await bcrypt.hash(testUser.pwd, 10);
+        console.log(hashedPassword);
+        await db.query('INSERT INTO users (username, pwd) VALUES ($1, $2);', [
+            testUser.username,
+            hashedPassword,
+        ]);
+    });
+
+    beforeEach(() => {
+        // Create new agent for session handling
+        agent = chai.request.agent(server);
+    });
+
+    afterEach(() => {
+        // Clear cookie after each test
+        agent.close();
+    });
+
+    after(async () => {
+        // Clean up database
+        await db.query('TRUNCATE TABLE users CASCADE');
+    });
+
+    describe('GET /profile', () => {
+        it('should return 401 if user is not authenticated', done => {
+            chai
+                .request(server)
+                .get('/profile')
+                .end((err, res) => {
+                    expect(res).to.have.status(401);
+                    expect(res.text).to.equal('Not authenticated');
+                    done();
+                });
+            });
+
+        it('should return user profile when authenticated', async () => {
+            // First login to get session
+            await agent.post('/login').send(testUser);
+
+            // Then access profile
+            const res = await agent.get('/profile');
+
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('username', testUser.username);
         });
     });
 });

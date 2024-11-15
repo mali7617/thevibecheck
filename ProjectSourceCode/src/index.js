@@ -55,8 +55,6 @@ app.use(
     })
 );
 
-
-
 /*_________API ROUTES_________*/
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -71,19 +69,15 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-  res.redirect('/login'); //this will call the /anotherRoute route in the API
+  res.redirect('/login'); 
   res.status(302);
 });
-
-
-
 
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.pwd, 10);
 
-  // To-DO: Insert username and hashed password into the 'users' table
   db.any(`insert into users(username, pwd) values($1, $2);`, [req.body.username, hash])
     .then(data =>{
       res.status(200).json({
@@ -100,62 +94,47 @@ app.post('/register', async (req, res) => {
     });
 })
 
-// //Login
-// app.get('/login', (req, res) => {
-//   res.render('pages/login')
-// });
+// Login POST
+app.post('/login', async (req, res) =>{
+  const hash = await bcrypt.hash(req.body.pwd, 10);
+  const query = 'select * from users where username = $1 limit 1;';
+    db.any(query, req.body.username).then(async user => {
+        user = user[0];
 
-// app.post('/login', async (req, res) => {
-//   const username = req.body.username;
-//   const password = req.body.password;
-//   const query = 'select * from users where users.username = $1 LIMIT 1';
-//   const values = [username];
+        // check if password from request matches with password in DB
+        const match = await bcrypt.compare(req.body.pwd, user.pwd);
+        if (!match) {
+          res.render('pages/login', {message: `Incorrect username or password.`, error: true});
+        } else {
+            req.session.user = user;
+            req.session.save();
+            res.redirect('/logout')
+        }
+    }).catch(err => {
+      console.log(error);
+      res.redirect('/login');
+    });
+});
 
-//   try{
-//     console.log("Querying for user:", username);
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.status(401).send('Not authenticated');
+  }
+  next();
+};
 
-//     const data = await db.one(query, values);
+app.use('/profile', auth);
 
-//     // Now we have the user data
-//     const user = {
-//       username: data.username,
-//       password: data.password // Make sure this is the hashed password from the database
-//     };
-   
-//     const match = await bcrypt.compare(password, user.password);
-
-//     if(!match)
-//     {
-//       return res.render('pages/login', { message: 'Incorrect username or password' });
-//     }
-
-//     req.session.user = user;
-//     req.session.save();
-
-//     return res.redirect('/discover');
-//   } catch(error){
-//     console.error("Login error:", error);
-//     res.status(500).send("Error Test");
-//   }
-
-// });
-
-// const auth = (req, res, next) => {
-//   if (!req.session.user) {
-//     // Redirect to login if no user in session
-//     return res.redirect('/login');
-//   }
-//   next();
-// };
-
-// // Apply auth middleware to /discover route
-// app.use('/discover', auth);
-
-
-// app.get('/logout', (req, res) => {
-//   req.session.destroy();
-//   res.render('pages/logout');
-// });
+app.get('/profile', (req, res) => {
+  try {
+    res.status(200).json({
+      username: req.session.user.username,
+    });
+  } catch (err) {
+    console.error('Profile error:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
