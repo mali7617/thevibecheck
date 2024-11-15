@@ -80,34 +80,36 @@ app.get('/test', (req, res) => {
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.pwd, 10);
-  const query = 'INSERT INTO users (username, pwd) VALUES ($1, $2);';
+  const hash = await bcrypt.hash(req.body.password, 10);
+  const query = 'INSERT INTO users (username, password) VALUES ($1, $2);';
   db.any(query, [
     req.body.username, 
     hash
   ]).then(data => {
-      res.render('pages/login');
-      res.status(200).json({
-        message: "Success"
+      res.render('pages/login', {
+        message: "Registered Successfully"
       });
+      // res.status(200).json({
+      //   message: "Success"
+      // });
     })
     .catch(error => {
       res.redirect('/register');
-      res.status(400).json({
-        message: "Invalid input"
-      });
+      // res.status(400).json({
+      //   message: "Invalid input"
+      // });
     });
 })
 
 // Login POST
 app.post('/login', async (req, res) =>{
-  const hash = await bcrypt.hash(req.body.pwd, 10);
+  const hash = await bcrypt.hash(req.body.password, 10);
   const query = 'select * from users where username = $1 limit 1;';
     db.any(query, req.body.username).then(async user => {
         user = user[0];
 
         // check if password from request matches with password in DB
-        const match = await bcrypt.compare(req.body.pwd, user.pwd);
+        const match = await bcrypt.compare(req.body.password, user.password);
         if (!match) {
           res.render('pages/login', {message: `Incorrect username or password.`, error: true});
         } else {

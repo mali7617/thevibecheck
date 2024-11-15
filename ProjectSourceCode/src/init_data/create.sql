@@ -7,5 +7,5 @@
 
 create table if not exists users (
     username varchar(50) primary key,
-    pwd char(60) not null
+    password char(60) not null
 )
