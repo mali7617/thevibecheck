@@ -73,6 +73,10 @@ app.get('/test', (req, res) => {
   res.status(302);
 });
 
+app.get('/query', (req,res)=>{
+res.redirect('/query');
+
+})
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library

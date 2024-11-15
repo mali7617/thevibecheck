@@ -1,3 +1,4 @@
+<div>
 <header>
 <script>
 var map;
@@ -33,7 +34,7 @@ function initMap() {
         makeRequest(); // call recursively to handle multiple 
 requests
       } else {
-        console.error('Error:', status);
+        console.error('REQUEST ERRROR:', status);
       }
     });
   }
@@ -45,7 +46,6 @@ requests
 </header>
 
 <body onload="initMap()">
-<div id="map">
-
-</div>
+{{> map}}
 </body>
+</div>

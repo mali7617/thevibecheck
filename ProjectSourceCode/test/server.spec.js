@@ -55,6 +55,7 @@ describe('Testing Add User API', () => {
     });
 });
 
+
 // Negative Testcase /register:
 describe('Testing Add User API', () => {
     it('Negative : /register. Checking invalid name', done => {
@@ -159,4 +160,19 @@ describe('Profile Route Tests', () => {
             expect(res.body).to.have.property('username', testUser.username);
         });
     });
+});
+
+describe('Testing Map Render', ()=> {
+ it('should return 302 if query to map returns successfully',done => {
+    chai
+    .request(server)
+    .get('/query')
+    .end((err, res) => {
+        expect(res).to.have.status(302);
+        expect(res.text).to.equal('Not authenticated');
+        done();
+    });
+ })
+
+
 });
