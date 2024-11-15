@@ -85,7 +85,7 @@ app.get('/test', (req, res) => {
 
 app.get('/api/get-google-maps-key', async (req, res) => {
   require('dotenv').config();
-  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY }).catch(err => { console.log(err) });
+  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
   return keyFetch;
 });
 
