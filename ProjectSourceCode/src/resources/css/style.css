@@ -1,4 +1,14 @@
-.map{
-display: flex;
-align-items: center;   
+.map {
+    display: flex;
+    align-items: center;
+}
+
+.moodHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: centers;
+}
+.moodBar{
+    
 }
