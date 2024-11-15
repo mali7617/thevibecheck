@@ -55,6 +55,10 @@ app.use(
   })
 );
 /*_________API ROUTES_________*/
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
 app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
 });
@@ -67,6 +71,11 @@ app.get('/map', (req, res) => {
 });
 app.get('/register', (req, res) => {
   res.render('pages/register');;
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/logout');
 });
 
 app.get('/test', (req, res) => {
@@ -87,44 +96,47 @@ app.get('/',(req,res)=> {
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.pwd, 10);
-
-  db.any(`insert into users(username, pwd) values($1, $2);`, [req.body.username, hash])
-    .then(data => {
-      res.status(200).json({
-        message: "Success"
+  const hash = await bcrypt.hash(req.body.password, 10);
+  const query = 'INSERT INTO users (username, password) VALUES ($1, $2);';
+  db.any(query, [
+    req.body.username, 
+    hash
+  ]).then(data => {
+      res.render('pages/login', {
+        message: "Registered Successfully"
       });
-      // res.redirect('/login');
+      // res.status(200).json({
+      //   message: "Success"
+      // });
     })
     .catch(error => {
-      console.log(error);
-      res.status(400).json({
-        message: "Invalid input"
-      });
-      // res.redirect('/register');
+      res.redirect('/register');
+      // res.status(400).json({
+      //   message: "Invalid input"
+      // });
     });
 })
 
 // Login POST
-app.post('/login', async (req, res) => {
-  const hash = await bcrypt.hash(req.body.pwd, 10);
+app.post('/login', async (req, res) =>{
+  const hash = await bcrypt.hash(req.body.password, 10);
   const query = 'select * from users where username = $1 limit 1;';
   db.any(query, req.body.username).then(async user => {
     user = user[0];
 
-    // check if password from request matches with password in DB
-    const match = await bcrypt.compare(req.body.pwd, user.pwd);
-    if (!match) {
-      res.render('pages/login', { message: `Incorrect username or password.`, error: true });
-    } else {
-      req.session.user = user;
-      req.session.save();
-      res.redirect('/logout')
-    }
-  }).catch(err => {
-    console.log(error);
-    res.redirect('/login');
-  });
+        // check if password from request matches with password in DB
+        const match = await bcrypt.compare(req.body.password, user.password);
+        if (!match) {
+          res.render('pages/login', {message: `Incorrect username or password.`, error: true});
+        } else {
+            req.session.user = user;
+            req.session.save();
+            res.redirect('/logout')
+        }
+    }).catch(err => {
+      console.log(err);
+      res.redirect('/register');
+    });
 });
 
 const auth = (req, res, next) => {
@@ -146,5 +158,7 @@ app.get('/profile', (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 module.exports = app.listen(3000);

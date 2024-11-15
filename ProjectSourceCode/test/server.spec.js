@@ -130,7 +130,6 @@ describe('Profile Route Tests', () => {
         // Clear users table and create test user
         await db.query('TRUNCATE TABLE users CASCADE');
         const hashedPassword = await bcrypt.hash(testUser.pwd, 10);
-        console.log(hashedPassword);
         await db.query('INSERT INTO users (username, pwd) VALUES ($1, $2);', [
             testUser.username,
             hashedPassword,
