@@ -46,7 +46,7 @@ describe('Testing Add User API', () => {
             .send({username: "test", pwd: "123"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.message).to.equals('Success');
+                expect(res.body.message).to.equals("Success");
                 done();
             });
     });
@@ -67,27 +67,13 @@ describe('Testing Add User API', () => {
             .send({username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678"})
             .end((err, res) => {
                 expect(res).to.have.status(400);
-                expect(res.body.message).to.equals('Invalid input');
+                expect(res.body.message).to.equals("Invalid input");
                 done();
             });
     });
 });
 
 // ********************************************************************************
-
-describe('Testing Redirect', () => {
-    // Sample test case given to test /test endpoint.
-    it('/test route should redirect to /login with 302 HTTP status code', done => {
-        chai
-            .request(server)
-            .get('/test')
-            .end((err, res) => {
-                res.should.have.status(302); // Expecting a redirect status code
-                res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
-                done();
-        });
-    });
-});
 
 describe('Testing Render', () => {
     // Sample test case given to test /test endpoint.
@@ -98,6 +84,22 @@ describe('Testing Render', () => {
             .end((err, res) => {
                 res.should.have.status(200); // Expecting a success status code
                 res.should.be.html; // Expecting a HTML response
+                done();
+        });
+    });
+});
+
+describe('Testing Redirect', () => {
+    // Sample test case given to test /test endpoint.
+    it('/test route should redirect to /login with 302 HTTP status code', done => {
+        chai
+            .request(server)
+            .get('/test')
+            .redirects(0)
+            .end((err, res) => {
+                res.should.have.status(302); // Expecting a redirect status code
+                //res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
+                res.should.have.header('location', '/login');
                 done();
         });
     });
