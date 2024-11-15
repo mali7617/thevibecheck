@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,4 +96,105 @@
       });
   </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    var map;
+    var service;
+    var infowindow;
+    var API_KEY = ""; // This will be set after the page loads
+
+    // Function to initialize the map
+    function initMap() {
+      // Begin in Sydney, Australia
+      var boulder = new google.maps.LatLng(40.015, -105.2705);
+
+      infowindow = new google.maps.InfoWindow();
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: boulder,
+        zoom: 15
+      });
+
+      // Set up event listener for the search button
+      document.getElementById('searchButton').addEventListener('click', function () {
+        const searchKey = document.getElementById('searchInput').value;
+        makeRequest(searchKey);
+      });
+    }
+
+    // Function to make a request to Google Places API
+    function makeRequest(searchKey) {
+      var request = {
+        query:'',
+        fields: ['name', 'geometry'],
+        type: 'food',
+        keyword: searchKey,
+      };
+
+      var service = new google.maps.places.PlacesService(map);
+      service.findPlaceFromQuery(request, function (results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+          }
+          map.setCenter(results[0].geometry.location);
+        } else {
+          console.error('REQUEST ERROR:', status);
+        }
+      });
+    }
+
+    // Function to create markers
+    function createMarker(place) {
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'click', function () {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+      });
+    }
+  </script>
+</head>
+
+<body onload="initMap()">
+  <!-- Input field for search key -->
+  <header>
+    <input type="text" id="searchInput" placeholder="Enter search keyword">
+    <button id="searchButton">Search</button>
+  </header>
+
+  <!-- Div for the map -->
+  <div id="map" style="height: 500px; width: 100%;"></div>
+
+  <!-- Load Google Maps API dynamically -->
+  <script>
+    // Function to load the Google Maps API script
+    function loadGoogleMapsAPI(apiKey) {
+      API_KEY = apiKey;
+      var script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+
+    // Fetch the API key from your server
+    fetch('/api/get-google-maps-key')
+      .then(response => response.json())
+      .then(data => {
+        loadGoogleMapsAPI(data.apiKey);
+      })
+      .catch(error => {
+        console.error('Error fetching API key:', error);
+      });
+  </script>
+</body>
+
+>>>>>>> Stashed changes
 </html>

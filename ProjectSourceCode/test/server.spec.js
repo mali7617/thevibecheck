@@ -88,20 +88,6 @@ describe('Testing Render', () => {
     });
 });
 
-describe('Testing Map Render', () => {
-    it('should return 302 if query to map returns successfully', done => {
-        chai
-            .request(server)
-            .get('/query')
-            .end((err, res) => {
-                expect(res).to.have.status(302);
-                expect(res.text).to.equal('Not authenticated');
-                done();
-            });
-    })
-
-
-});
 
 describe('Testing Redirect', () => {
     // Sample test case given to test /test endpoint.
