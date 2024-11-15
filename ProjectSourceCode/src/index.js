@@ -57,7 +57,7 @@ app.use(
 
 /*_________API ROUTES_________*/
 app.get('/', (req, res) => {
-  res.redirect('/register');
+  res.redirect('/login');
 });
 
 app.get('/welcome', (req, res) => {
@@ -70,6 +70,10 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.render('pages/register');;
+});
+
+app.get('/logout', (req, res) => {
+  res.render('pages/logout');
 });
 
 app.get('/test', (req, res) => {
