@@ -12,7 +12,6 @@
     function initMap() {
       // Begin in Sydney, Australia
       var boulder = new google.maps.LatLng(40.015, -105.2705);
-
       infowindow = new google.maps.InfoWindow();
       map = new google.maps.Map(document.getElementById('map'), {
         center: boulder,
@@ -29,7 +28,7 @@
     // Function to make a request to Google Places API
     function makeRequest(searchKey) {
       var request = {
-        query:'',
+        query: '',
         fields: ['name', 'geometry'],
         type: 'food',
         keyword: searchKey,
@@ -71,7 +70,7 @@
   </header>
 
   <!-- Div for the map -->
-  <div id="map" style="height: 500px; width: 100%;"></div>
+  <div id="map" style="display:flex; align-items:center; justify-content:center;height: 350px; width: 100%"></div>
 
   <!-- Load Google Maps API dynamically -->
   <script>
@@ -85,7 +84,6 @@
       document.body.appendChild(script);
     }
 
-    // Fetch the API key from your server
     fetch('/api/get-google-maps-key')
       .then(response => response.json())
       .then(data => {
