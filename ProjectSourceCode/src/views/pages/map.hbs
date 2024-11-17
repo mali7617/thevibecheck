@@ -1,3 +1,158 @@
-<div id="map">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Google Maps Search with Mood Filter</title>
+  <style>
+    /* Basic styles for layout */
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 350px;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+    #searchInput, #moodInput {
+      flex-grow: 1;
+      padding: 5px;
+    }
+  </style>
+  <!-- API key script will be loaded dynamically -->
+</head>
 
-</div>
+<body>
+  <!-- Input fields for search key and mood -->
+  <header>
+    <input type="text" id="searchInput" placeholder="Enter search keyword">
+    <input type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
+    <button id="searchButton">Search</button>
+  </header>
+
+  <!-- Div for the map -->
+  <div id="map"></div>
+
+  <script>
+    var map;
+    var service;
+    var infowindow;
+    var autocomplete;
+    var markers = [];
+
+    // Initialize the map and autocomplete
+    function initMap() {
+      // Begin in Boulder, Colorado
+      var boulder = new google.maps.LatLng(40.015, -105.2705);
+      infowindow = new google.maps.InfoWindow();
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: boulder,
+        zoom: 13
+      });
+
+      // Initialize autocomplete on search input
+      var inputField = document.getElementById('searchInput');
+      autocomplete = new google.maps.places.Autocomplete(inputField, {
+        fields: ['name', 'geometry']
+      });
+
+      // Add listener for autocomplete selection
+      autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (place.geometry) {
+          makeNearbySearch(place.name);
+        }
+      });
+
+      // Set up event listener for the search button
+      document.getElementById('searchButton').addEventListener('click', function () {
+        const searchKey = inputField.value;
+        const mood = document.getElementById('moodInput').value;
+        makeNearbySearch(searchKey, mood);
+        makeNearbySearch(searchKey, mood);
+      });
+    }
+
+    // Function to make a Nearby Search request
+    // Function to make a Nearby Search request
+    function makeNearbySearch(searchKey, mood) {
+      var boulder = new google.maps.LatLng(40.015, -105.2705);
+
+      var request = {
+        location: boulder,
+        radius: 5000, // 10 km radius around Boulder
+        keyword: `${searchKey} ${mood}`
+      };
+
+      var service = new google.maps.places.PlacesService(map);
+      service.nearbySearch(request, function (results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          clearMarkers(); // Clear existing markers
+          var bounds = new google.maps.LatLngBounds(); // Initialize bounds
+          
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i], bounds);
+          }
+
+          // Fit the map to the bounds containing all markers
+          map.fitBounds(bounds);
+        } else {
+          console.error('REQUEST ERROR:', status);
+        }
+      });
+    }
+
+    // Function to create markers and extend bounds
+    function createMarker(place, bounds) {
+  if (!place.geometry || !place.geometry.location) {
+    console.error("Location is undefined for place:", place);
+    return;
+  }
+
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  markers.push(marker);
+
+  // Extend the bounds to include each marker's location
+  bounds.extend(place.geometry.location);
+
+  google.maps.event.addListener(marker, 'click', function () {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+  });
+}
+
+    // Function to clear existing markers
+    function clearMarkers() {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
+      markers = [];
+    }
+
+    // Function to dynamically load the Google Maps API
+    function loadGoogleMapsAPI(apiKey) {
+      var script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+
+    // Fetch the API key and load Google Maps
+    fetch('/api/get-google-maps-key')
+      .then(response => response.json())
+      .then(data => {
+        loadGoogleMapsAPI(data.apiKey);
+      })
+      .catch(error => {
+        console.error('Error fetching API key:', error);
+      });
+  </script>
+</body>
+</html>

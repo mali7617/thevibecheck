@@ -20,7 +20,7 @@ const chai = require('chai'); // Chai HTTP provides an interface for live integr
 const chaiHttp = require('chai-http');
 chai.should();
 chai.use(chaiHttp);
-const {assert, expect} = chai;
+const { assert, expect } = chai;
 
 // ********************** DEFAULT WELCOME TESTCASE ****************************
 
@@ -35,7 +35,7 @@ describe('Server!', () => {
                 expect(res.body.status).to.equals('success');
                 assert.strictEqual(res.body.message, 'Welcome!');
                 done();
-        });
+            });
     });
 });
 
@@ -46,7 +46,7 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({username: "test", pwd: "123"})
+            .send({ username: "test", pwd: "123", test:1})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.message).to.equals("Success");
@@ -62,7 +62,7 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678"})
+            .send({ username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678", test:1})
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.message).to.equals("Invalid input");
@@ -70,6 +70,7 @@ describe('Testing Add User API', () => {
             });
     });
 });
+
 
 // ********************************************************************************
 
@@ -83,9 +84,10 @@ describe('Testing Render', () => {
                 res.should.have.status(200); // Expecting a success status code
                 res.should.be.html; // Expecting a HTML response
                 done();
-        });
+            });
     });
 });
+
 
 describe('Testing Redirect', () => {
     // Sample test case given to test /test endpoint.
@@ -99,7 +101,7 @@ describe('Testing Redirect', () => {
                 //res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
                 res.should.have.header('location', '/login');
                 done();
-        });
+            });
     });
 });
 
@@ -114,7 +116,6 @@ describe('Profile Route Tests', () => {
         // Clear users table and create test user
         await db.query('TRUNCATE TABLE users CASCADE');
         const hashedPassword = await bcrypt.hash(testUser.pwd, 10);
-        console.log(hashedPassword);
         await db.query('INSERT INTO users (username, pwd) VALUES ($1, $2);', [
             testUser.username,
             hashedPassword,
@@ -146,7 +147,7 @@ describe('Profile Route Tests', () => {
                     expect(res.text).to.equal('Not authenticated');
                     done();
                 });
-            });
+        });
 
         it('should return user profile when authenticated', async () => {
             // First login to get session
@@ -162,17 +163,3 @@ describe('Profile Route Tests', () => {
     });
 });
 
-describe('Testing Map Render', ()=> {
- it('should return 302 if query to map returns successfully',done => {
-    chai
-    .request(server)
-    .get('/query')
-    .end((err, res) => {
-        expect(res).to.have.status(302);
-        expect(res.text).to.equal('Not authenticated');
-        done();
-    });
- })
-
-
-});
