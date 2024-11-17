@@ -73,11 +73,6 @@ app.get('/register', (req, res) => {
   res.render('pages/register', {register: 1});
 });
 
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.render('pages/logout');
-});
-
 app.get('/test', (req, res) => {
   res.redirect('/login');
   res.status(302);
@@ -143,6 +138,11 @@ app.post('/login', async (req, res) =>{
       console.log(err);
       res.redirect('/register');
     });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/logout');
 });
 
 const auth = (req, res, next) => {
