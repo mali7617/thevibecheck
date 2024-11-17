@@ -105,15 +105,15 @@ app.post('/register', async (req, res) => {
       res.render('pages/login', {
         message: "Registered Successfully"
       });
-      // res.status(200).json({
-      //   message: "Success"
-      // });
+     res.status(200).json({
+         message: "Success"
+       });
     })
     .catch(error => {
       res.redirect('/register');
-      // res.status(400).json({
-      //   message: "Invalid input"
-      // });
+       res.status(400).json({
+         message: "Invalid input"
+       });
     });
 })
 

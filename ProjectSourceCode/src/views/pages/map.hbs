@@ -1,16 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <title>Google Maps Search with Autocomplete</title>
+  <style>
+    /* Basic styles for layout */
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 350px;
+      width: 100%;
+    }
+    header {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+    #searchInput {
+      flex-grow: 1;
+      padding: 5px;
+    }
+  </style>
+  <!-- API key script will be loaded dynamically -->
+</head>
+
+<body>
+  <!-- Input field for search key -->
+  <header>
+    <input type="text" id="searchInput" placeholder="Enter search keyword">
+    <button id="searchButton">Search</button>
+  </header>
+
+  <!-- Div for the map -->
+  <div id="map"></div>
+
   <script>
     var map;
     var service;
     var infowindow;
-    var API_KEY = ""; // This will be set after the page loads
+    var autocomplete;
 
-    // Function to initialize the map
+    // Initialize the map and autocomplete
     function initMap() {
-      // Begin in Sydney, Australia
+      // Begin in Boulder, Colorado
       var boulder = new google.maps.LatLng(40.015, -105.2705);
       infowindow = new google.maps.InfoWindow();
       map = new google.maps.Map(document.getElementById('map'), {
@@ -18,9 +50,24 @@
         zoom: 15
       });
 
+      // Initialize autocomplete on search input
+      var inputField = document.getElementById('searchInput');
+      autocomplete = new google.maps.places.Autocomplete(inputField, {
+        types: ['(cities)'],
+        fields: ['name', 'geometry']
+      });
+
+      // Add listener for autocomplete selection
+      autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+        if (place.geometry) {
+          makeRequest(place.name);
+        }
+      });
+
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
-        const searchKey = document.getElementById('searchInput').value;
+        const searchKey = inputField.value;
         makeRequest(searchKey);
       });
     }
@@ -28,10 +75,8 @@
     // Function to make a request to Google Places API
     function makeRequest(searchKey) {
       var request = {
-        query: '',
+        query: searchKey,
         fields: ['name', 'geometry'],
-        type: 'food',
-        keyword: searchKey,
       };
 
       var service = new google.maps.places.PlacesService(map);
@@ -59,31 +104,17 @@
         infowindow.open(map, this);
       });
     }
-  </script>
-</head>
 
-<body onload="initMap()">
-  <!-- Input field for search key -->
-  <header>
-    <input type="text" id="searchInput" placeholder="Enter search keyword">
-    <button id="searchButton">Search</button>
-  </header>
-
-  <!-- Div for the map -->
-  <div id="map" style="display:flex; align-items:center; justify-content:center;height: 350px; width: 100%"></div>
-
-  <!-- Load Google Maps API dynamically -->
-  <script>
-    // Function to load the Google Maps API script
+    // Function to dynamically load the Google Maps API
     function loadGoogleMapsAPI(apiKey) {
-      API_KEY = apiKey;
       var script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
       script.async = true;
       script.defer = true;
       document.body.appendChild(script);
     }
 
+    // Fetch the API key and load Google Maps
     fetch('/api/get-google-maps-key')
       .then(response => response.json())
       .then(data => {
@@ -94,5 +125,4 @@
       });
   </script>
 </body>
-
 </html>

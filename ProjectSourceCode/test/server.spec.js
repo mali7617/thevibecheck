@@ -115,7 +115,6 @@ describe('Profile Route Tests', () => {
             testUser.username,
             hashedPassword,
         ]);
-        done();
     });
 
     beforeEach(() => {
@@ -131,7 +130,6 @@ describe('Profile Route Tests', () => {
     after(async () => {
         // Clean up database
         await db.query('TRUNCATE TABLE users CASCADE');
-        done();
     });
 
     describe('GET /profile', () => {
@@ -142,7 +140,6 @@ describe('Profile Route Tests', () => {
                 .end((err, res) => {
                     expect(res).to.have.status(401);
                     expect(res.text).to.equal('Not authenticated');
-                    done();
                 });
         });
 
@@ -156,7 +153,6 @@ describe('Profile Route Tests', () => {
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('username', testUser.username);
-            done();
         });
     });
 });
