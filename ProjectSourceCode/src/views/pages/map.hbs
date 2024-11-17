@@ -53,7 +53,6 @@
       // Initialize autocomplete on search input
       var inputField = document.getElementById('searchInput');
       autocomplete = new google.maps.places.Autocomplete(inputField, {
-        types: ['(cities)','restaurant', 'bar', 'cafe', 'bakery','hospital','doctor','pharmacy','library','amusement_park'],
         fields: ['name', 'geometry']
       });
 
