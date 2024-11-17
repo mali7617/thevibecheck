@@ -1,7 +1,7 @@
-CREATE TABLE USERS (
-    user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    pwd VARCHAR(60) NOT NULL,
+create table users (
+    user_id SERIAL primary key,
+    username VARCHAR(50) not null,
+    pwd VARCHAR(60) not null,
     user_type VARCHAR(25)
 );
 

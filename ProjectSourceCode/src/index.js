@@ -70,7 +70,7 @@ app.get('/map', (req, res) => {
   res.render('pages/map');
 });
 app.get('/register', (req, res) => {
-  res.render('pages/register');;
+  res.render('pages/register');
 });
 
 app.get('/logout', (req, res) => {
@@ -153,10 +153,12 @@ app.get('/profile', (req, res) => {
     res.status(200).json({
       username: req.session.user.username,
     });
+    res.done();
   } catch (err) {
     console.error('Profile error:', err);
     res.status(500).send('Internal Server Error');
   }
+  
 });
 
 
