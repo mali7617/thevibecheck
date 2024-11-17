@@ -70,7 +70,7 @@ app.get('/map', (req, res) => {
   res.render('pages/map');
 });
 app.get('/register', (req, res) => {
-  res.render('pages/register');
+  res.render('pages/register', {register: 1});
 });
 
 app.get('/logout', (req, res) => {
@@ -137,7 +137,7 @@ app.post('/login', async (req, res) =>{
         } else {
             req.session.user = user;
             req.session.save();
-            res.redirect('/register');
+            res.redirect('/map');
         }
     }).catch(err => {
       console.log(err);
