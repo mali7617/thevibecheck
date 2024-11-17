@@ -71,9 +71,12 @@
         const searchKey = inputField.value;
         const mood = document.getElementById('moodInput').value;
         makeNearbySearch(searchKey, mood);
+        makeNearbySearch(searchKey, mood);
       });
     }
 
+    // Function to make a Nearby Search request
+    function makeNearbySearch(searchKey, mood) {
     // Function to make a Nearby Search request
     function makeNearbySearch(searchKey, mood) {
       var boulder = new google.maps.LatLng(40.015, -105.2705);
@@ -85,6 +88,7 @@
       };
 
       var service = new google.maps.places.PlacesService(map);
+      service.nearbySearch(request, function (results, status) {
       service.nearbySearch(request, function (results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           clearMarkers(); // Clear existing markers
