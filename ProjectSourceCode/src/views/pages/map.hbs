@@ -40,6 +40,7 @@
     var service;
     var infowindow;
     var autocomplete;
+    var markers = [];
 
     // Initialize the map and autocomplete
     function initMap() {
@@ -61,7 +62,7 @@
       autocomplete.addListener('place_changed', function () {
         var place = autocomplete.getPlace();
         if (place.geometry) {
-          makeRequest(place.name);
+          makeNearbySearch(place.name);
         }
       });
 
@@ -69,46 +70,67 @@
       document.getElementById('searchButton').addEventListener('click', function () {
         const searchKey = inputField.value;
         const mood = document.getElementById('moodInput').value;
-        // MOOD STORED
-        makeRequest(searchKey);
+        makeNearbySearch(searchKey, mood);
       });
     }
 
-    // Function to make a request to Google Places API
-    function makeRequest(searchKey) {
+    // Function to make a Nearby Search request
+    function makeNearbySearch(searchKey, mood) {
       var boulder = new google.maps.LatLng(40.015, -105.2705);
 
       var request = {
-        query: searchKey,
         location: boulder,
-        radius: 10000, // 10 km radius around Boulder
-        fields: ['name', 'geometry'],
+        radius: 5000, // 10 km radius around Boulder
+        keyword: `${searchKey} ${mood}`
       };
 
       var service = new google.maps.places.PlacesService(map);
-      service.findPlaceFromQuery(request, function (results, status) {
+      service.nearbySearch(request, function (results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
+          clearMarkers(); // Clear existing markers
+          var bounds = new google.maps.LatLngBounds(); // Initialize bounds
+          
           for (var i = 0; i < results.length; i++) {
-            createMarker(results[i]);
+            createMarker(results[i], bounds);
           }
-          map.setCenter(results[0].geometry.location);
+
+          // Fit the map to the bounds containing all markers
+          map.fitBounds(bounds);
         } else {
           console.error('REQUEST ERROR:', status);
         }
       });
     }
 
-    // Function to create markers
-    function createMarker(place) {
-      var marker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location
-      });
+    // Function to create markers and extend bounds
+    function createMarker(place, bounds) {
+  if (!place.geometry || !place.geometry.location) {
+    console.error("Location is undefined for place:", place);
+    return;
+  }
 
-      google.maps.event.addListener(marker, 'click', function () {
-        infowindow.setContent(place.name);
-        infowindow.open(map, this);
-      });
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  markers.push(marker);
+
+  // Extend the bounds to include each marker's location
+  bounds.extend(place.geometry.location);
+
+  google.maps.event.addListener(marker, 'click', function () {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+  });
+}
+
+    // Function to clear existing markers
+    function clearMarkers() {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
+      markers = [];
     }
 
     // Function to dynamically load the Google Maps API
