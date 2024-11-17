@@ -69,7 +69,8 @@
       document.getElementById('searchButton').addEventListener('click', function () {
         const searchKey = inputField.value;
         const mood = document.getElementById('moodInput').value;
-        makeRequest(searchKey + ' ' + mood);
+        // MOOD STORED
+        makeRequest(searchKey);
       });
     }
 
