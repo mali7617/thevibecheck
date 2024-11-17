@@ -10,3 +10,35 @@ Whether users are in the mood for a cozy café, a lively bar, or a quiet park, o
 - Matthew Lieng
 - Austin Hutchen
 - Gervis Ramos Garcia
+
+## Technology Stack
+- Node
+- Docker
+- PostgreSQL
+- JavaScript
+- Handlebars
+- HTML
+- Bootstrap
+- Git
+
+## Prerequisites
+- npm
+- node_modules
+- docker
+
+## Instructions to run locally
+1.) Run docker compose down --volumes (include sudo based on permissions)
+2.) Run docker compose up (include sudo based on permissions)
+3.) Open a browser of your choice
+4.) Type "http://localhost:3000/" into the search field
+5.) Press enter
+6.) Experience The Vibe Check!
+
+## Instructions to run tests
+1.) Check docker-compose.yaml and ensure that the 'command' field in the web section is set to "npm run testandrun"
+2.) Run docker compose down --volumes (include sudo based on permissions)
+3.) Run docker compose up (include sudo based on permissions)
+4.) View test case results
+
+## Link to deployed application
+http://localhost:3000/
