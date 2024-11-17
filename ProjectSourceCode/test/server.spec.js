@@ -34,6 +34,7 @@ describe('Server!', () => {
                 expect(res).to.have.status(200);
                 expect(res.body.status).to.equals('success');
                 assert.strictEqual(res.body.message, 'Welcome!');
+                done();
             });
     });
 });
@@ -45,10 +46,11 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({ username: "test", pwd: "123" })
+            .send({ username: "test", pwd: "123", test:1})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.message).to.equals("Success");
+                done();
             });
     });
 });
@@ -60,10 +62,11 @@ describe('Testing Add User API', () => {
         chai
             .request(server)
             .post('/register')
-            .send({ username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678" })
+            .send({ username: "morethanfifycharactersmorethanfifycharactersmorethanfifycharacters", pwd: "5678", test:1})
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 expect(res.body.message).to.equals("Invalid input");
+                done();
             });
     });
 });
@@ -80,6 +83,7 @@ describe('Testing Render', () => {
             .end((err, res) => {
                 res.should.have.status(200); // Expecting a success status code
                 res.should.be.html; // Expecting a HTML response
+                done();
             });
     });
 });
@@ -96,6 +100,7 @@ describe('Testing Redirect', () => {
                 res.should.have.status(302); // Expecting a redirect status code
                 //res.should.redirectTo(/^.*127\.0\.0\.1.*\/login$/); // Expecting a redirect to /login with the mentioned Regex
                 res.should.have.header('location', '/login');
+                done();
             });
     });
 });
@@ -140,6 +145,7 @@ describe('Profile Route Tests', () => {
                 .end((err, res) => {
                     expect(res).to.have.status(401);
                     expect(res.text).to.equal('Not authenticated');
+                    done();
                 });
         });
 

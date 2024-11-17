@@ -96,42 +96,48 @@ app.get('/',(req,res)=> {
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.password, 10);
-  const query = 'INSERT INTO users (username, password) VALUES ($1, $2);';
+  const hash = await bcrypt.hash(req.body.pwd, 10);
+  const query = 'INSERT INTO users (username, pwd) VALUES ($1, $2);';
   db.any(query, [
     req.body.username, 
     hash
   ]).then(data => {
-      res.render('pages/login', {
-        message: "Registered Successfully"
-      });
-     res.status(200).json({
-         message: "Success"
-       });
+    if(req.body.test){
+      res.status(200).json({
+          message: "Success"
+        });
+      }
+    else{
+      res.render('pages/login');
+    }
     })
     .catch(error => {
-      res.redirect('/register');
-       res.status(400).json({
-         message: "Invalid input"
-       });
+      if(req.body.test){
+        res.status(400).json({
+          message: "Invalid input"
+        });
+      }
+      else{
+        res.redirect('/register');
+      }
     });
 })
 
 // Login POST
 app.post('/login', async (req, res) =>{
-  const hash = await bcrypt.hash(req.body.password, 10);
+  const hash = await bcrypt.hash(req.body.pwd, 10);
   const query = 'select * from users where username = $1 limit 1;';
   db.any(query, req.body.username).then(async user => {
     user = user[0];
 
         // check if password from request matches with password in DB
-        const match = await bcrypt.compare(req.body.password, user.password);
+        const match = await bcrypt.compare(req.body.pwd, user.pwd);
         if (!match) {
           res.render('pages/login', {message: `Incorrect username or password.`, error: true});
         } else {
             req.session.user = user;
             req.session.save();
-            res.redirect('/logout')
+            res.redirect('/register');
         }
     }).catch(err => {
       console.log(err);
@@ -149,15 +155,16 @@ const auth = (req, res, next) => {
 app.use('/profile', auth);
 
 app.get('/profile', (req, res) => {
-  try {
-    res.status(200).json({
-      username: req.session.user.username,
-    });
-    res.done();
-  } catch (err) {
-    console.error('Profile error:', err);
-    res.status(500).send('Internal Server Error');
-  }
+  app.get('/profile', (req, res) => {
+    try {
+      res.status(200).json({
+        username: req.session.user.username,
+      });
+    } catch (err) {
+      console.error('Profile error:', err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
   
 });
 
