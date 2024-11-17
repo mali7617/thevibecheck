@@ -76,13 +76,12 @@
     }
 
     // Function to make a Nearby Search request
-    // Function to make a Nearby Search request
     function makeNearbySearch(searchKey, mood) {
       var boulder = new google.maps.LatLng(40.015, -105.2705);
 
       var request = {
         location: boulder,
-        radius: 5000, // 10 km radius around Boulder
+        radius: 40000, // 6 km radius around Boulder
         keyword: `${searchKey} ${mood}`
       };
 
