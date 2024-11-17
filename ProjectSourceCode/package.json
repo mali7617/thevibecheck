@@ -6,6 +6,7 @@
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.20.3",
     "chalk": "^5.3.0",
+    "diff": "^7.0.0",
     "dotenv": "^16.4.5",
     "express": "^4.6.1",
     "express-handlebars": "^7.1.2",
