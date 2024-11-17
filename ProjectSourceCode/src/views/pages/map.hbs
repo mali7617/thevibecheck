@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Google Maps Search with Autocomplete</title>
+  <title>Google Maps Search with Mood Filter</title>
   <style>
     /* Basic styles for layout */
     body {
@@ -16,7 +16,7 @@
       gap: 10px;
       padding: 10px;
     }
-    #searchInput {
+    #searchInput, #moodInput {
       flex-grow: 1;
       padding: 5px;
     }
@@ -25,9 +25,10 @@
 </head>
 
 <body>
-  <!-- Input field for search key -->
+  <!-- Input fields for search key and mood -->
   <header>
     <input type="text" id="searchInput" placeholder="Enter search keyword">
+    <input type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
     <button id="searchButton">Search</button>
   </header>
 
@@ -47,7 +48,7 @@
       infowindow = new google.maps.InfoWindow();
       map = new google.maps.Map(document.getElementById('map'), {
         center: boulder,
-        zoom: 15
+        zoom: 13
       });
 
       // Initialize autocomplete on search input
@@ -67,15 +68,19 @@
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
         const searchKey = inputField.value;
-        makeRequest(searchKey);
+        const mood = document.getElementById('moodInput').value;
+        makeRequest(searchKey + ' ' + mood);
       });
     }
 
     // Function to make a request to Google Places API
     function makeRequest(searchKey) {
-      // adjust this for moods
+      var boulder = new google.maps.LatLng(40.015, -105.2705);
+
       var request = {
         query: searchKey,
+        location: boulder,
+        radius: 10000, // 10 km radius around Boulder
         fields: ['name', 'geometry'],
       };
 

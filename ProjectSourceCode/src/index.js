@@ -154,7 +154,6 @@ const auth = (req, res, next) => {
 
 app.use('/profile', auth);
 
-app.get('/profile', (req, res) => {
   app.get('/profile', (req, res) => {
     try {
       res.status(200).json({
@@ -166,7 +165,6 @@ app.get('/profile', (req, res) => {
     }
   });
   
-});
 
 
 
