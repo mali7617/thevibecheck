@@ -85,7 +85,9 @@ app.get('/api/get-google-maps-key', async (req, res) => {
 });
 
 app.get('/account', (req, res) => {
-  res.render('pages/account');
+  res.render('pages/account', {
+    username: req.session.user.username,
+  });
 });
 
 // Register
