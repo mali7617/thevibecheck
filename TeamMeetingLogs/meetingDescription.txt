@@ -2,3 +2,13 @@
 10/30/2024: Finalized designs of wireframes and standardized them.
 10/31/2024: Followed lab guide to set up basic file structure of project.
 11/1/2024: Created project board and created user stories for our first Epic based on Agile workflow.
+11/4/2024: The handlebars partials for the login, register, and header pages were created.
+11/6/2024: The nav bar partial was created, basic API routes were added but not tested, added code from old labs to help build index.js, docker-compose.yaml, and .env files.
+11/7/2024: Worked on creating our database design.
+11/8/2024: Started creating and working with test cases as a part of Lab 11.
+11/11/2024: Continued work on Lab 11.
+11/13/2024: Continued work on Lab 11.
+11/14/2024: Finished work on Lab 11, planned work for rest of week.
+11/15/2024: Worked on ensuring test cases were working on every machine while still successfully running on browser. This led to a slew of issues that needed to be fixed on multiple machines, Austin created and implemented a basic version of the map page.
+11/16/2024: Fixed issues from Friday lab and made sure all machines were capable of properly running test cases as well as running on browser, added all database table creation.
+11/17/2024: Database table creation and many branches led to issues with test cases which were fully resolved. Added search logic based on location and mood to map page, Updated ReadME, created a simple working build that now requires styling.
