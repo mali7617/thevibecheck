@@ -84,9 +84,9 @@ app.get('/api/get-google-maps-key', async (req, res) => {
   return keyFetch;
 });
 
-app.get('/',(req,res)=> { 
-  res.redirect('/login');
-})
+app.get('/account', (req, res) => {
+  res.render('pages/account');
+});
 
 // Register
 app.post('/register', async (req, res) => {
