@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Google Maps Search with Mood Filter</title>
   <style>
@@ -7,16 +8,20 @@
     body {
       font-family: Arial, sans-serif;
     }
+
     #map {
-      height: 350px;
+      height: 400px;
       width: 100%;
     }
+
     header {
       display: flex;
       gap: 10px;
       padding: 10px;
     }
-    #searchInput, #moodInput {
+
+    #searchInput,
+    #moodInput {
       flex-grow: 1;
       padding: 5px;
     }
@@ -27,13 +32,34 @@
 <body>
   <!-- Input fields for search key and mood -->
   <header>
-    <input type="text" id="searchInput" placeholder="Enter search keyword">
-    <input type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
-    <button id="searchButton">Search</button>
+    <input class="form-control" type="text" id="searchInput" placeholder="Enter search keyword">
+    <input class="form-control" type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
+    <button class="btn btn-secondary" id="searchButton">Search</button>
   </header>
 
-  <!-- Div for the map -->
-  <div id="map"></div>
+  <!-- Div for the map and mood selector-->
+  <div class="container text-center my-5 ">
+    <div class="row">
+      <div class="col-7">
+        <div id="map"></div>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-4 rounded-5 bg-light border border-3 secondary">
+        <h3 class="my-5">What's the mood today?</h3>
+        <div class="col">
+          <div class="row my-2 mx-3">
+            <button id="cozyButton" class="btn btn-danger bg-gradient p-2">Cozy</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="livelyButton" style="background-color: rgb(255, 146, 36);" class="btn btn bg-gradient text-white p-2">Lively</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="hungryButton" class="btn btn-primary bg-gradient p-2">Hungry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     var map;
@@ -73,6 +99,21 @@
         makeNearbySearch(searchKey, mood);
         makeNearbySearch(searchKey, mood);
       });
+
+      // Event listener for cozy button
+      document.getElementById('cozyButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "cozy");
+      });
+
+      // Event listener for lively button
+      document.getElementById('livelyButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "lively");
+      });
+
+      // Event listener for hungry button
+      document.getElementById('hungryButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "food");
+      });
     }
 
     // Function to make a Nearby Search request
@@ -90,7 +131,7 @@
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           clearMarkers(); // Clear existing markers
           var bounds = new google.maps.LatLngBounds(); // Initialize bounds
-          
+
           for (var i = 0; i < results.length; i++) {
             createMarker(results[i], bounds);
           }
@@ -105,26 +146,26 @@
 
     // Function to create markers and extend bounds
     function createMarker(place, bounds) {
-  if (!place.geometry || !place.geometry.location) {
-    console.error("Location is undefined for place:", place);
-    return;
-  }
+      if (!place.geometry || !place.geometry.location) {
+        console.error("Location is undefined for place:", place);
+        return;
+      }
 
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
 
-  markers.push(marker);
+      markers.push(marker);
 
-  // Extend the bounds to include each marker's location
-  bounds.extend(place.geometry.location);
+      // Extend the bounds to include each marker's location
+      bounds.extend(place.geometry.location);
 
-  google.maps.event.addListener(marker, 'click', function () {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
-}
+      google.maps.event.addListener(marker, 'click', function () {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+      });
+    }
 
     // Function to clear existing markers
     function clearMarkers() {
@@ -154,4 +195,5 @@
       });
   </script>
 </body>
+
 </html>
