@@ -64,13 +64,11 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login')
+  res.render('pages/login', {layout: 'main2'})
 });
-app.get('/map', (req, res) => {
-  res.render('pages/map');
-});
+
 app.get('/register', (req, res) => {
-  res.render('pages/register', {register: 1});
+  res.render('pages/register', {register: 1, layout: 'main2'});
 });
 
 app.get('/test', (req, res) => {
@@ -90,6 +88,10 @@ app.get('/account', (req, res) => {
   });
 });
 
+app.get('/map', (req, res) => {
+  res.render('pages/map');
+});
+
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
@@ -105,7 +107,7 @@ app.post('/register', async (req, res) => {
         });
       }
     else{
-      res.render('pages/login');
+      res.redirect('/login');
     }
     })
     .catch(error => {
@@ -130,7 +132,7 @@ app.post('/login', async (req, res) =>{
         // check if password from request matches with password in DB
         const match = await bcrypt.compare(req.body.pwd, user.pwd);
         if (!match) {
-          res.render('pages/login', {message: `Incorrect username or password.`, error: true});
+          res.render('pages/login', {message: `Incorrect username or password.`, error: true, layout: 'main2'});
         } else {
             req.session.user = user;
             req.session.save();
@@ -144,7 +146,7 @@ app.post('/login', async (req, res) =>{
 
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.render('pages/logout');
+  res.render('pages/logout', {layout: 'main2'});
 });
 
 const auth = (req, res, next) => {
@@ -153,6 +155,12 @@ const auth = (req, res, next) => {
   }
   next();
 };
+
+app.use('/map', auth);
+  app.get('/map', (req, res) => {
+    res.render('pages/map');
+  });
+
 
 app.use('/profile', auth);
 
