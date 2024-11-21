@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+
 
 <head>
   <title>Google Maps Search with Mood Filter</title>
@@ -27,6 +27,24 @@
     #moodInput {
       flex-grow: 1;
       padding: 5px;
+    .search-bar {
+      max-width: 500px;
+      margin: auto auto;
+    }
+    .search-bar .input-group {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar .form-control {
+        border: none;
+        padding-left: 20px;
+    }
+
+    .search-bar .btn {
+        border: none;
+        padding: 10px 20px;
     }
 
     .search-bar {
@@ -54,11 +72,14 @@
 
 <body>
   <!-- Input fields for search key and mood -->
-  <header>
-    <input class="form-control" type="text" id="searchInput" placeholder="Enter search keyword">
-    <input class="form-control" type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
-    <button class="btn btn-secondary" id="searchButton">Search</button>
-  </header>
+
+  <div class="container">
+    <div class="search-bar">
+      <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+      </div>
+    </div>
+  </div>
 
   <!-- Div for the map and mood selector-->
   <div class="container text-center my-5">
@@ -127,7 +148,7 @@
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
         const searchKey = inputField.value;
-        const mood = document.getElementById('moodInput').value;
+        const mood = '';
         makeNearbySearch(searchKey, mood);
       });
 
@@ -154,6 +175,7 @@
 
       document.getElementById('relaxButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "relax");
+
       });
     }
 
@@ -165,6 +187,7 @@
         location: boulder,
         radius: 80000, 
         keyword: `${searchKey} ${mood}`
+
       };
 
       var service = new google.maps.places.PlacesService(map);
@@ -237,4 +260,3 @@
   </script>
 </body>
 
-</html>
