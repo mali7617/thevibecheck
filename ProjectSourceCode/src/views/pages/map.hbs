@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
   <title>Google Maps Search with Mood Filter</title>
   <style>
@@ -11,14 +10,24 @@
       height: 350px;
       width: 100%;
     }
-    header {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
+    .search-bar {
+      max-width: 500px;
+      margin: auto auto;
     }
-    #searchInput, #moodInput {
-      flex-grow: 1;
-      padding: 5px;
+    .search-bar .input-group {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar .form-control {
+        border: none;
+        padding-left: 20px;
+    }
+
+    .search-bar .btn {
+        border: none;
+        padding: 10px 20px;
     }
   </style>
   <!-- API key script will be loaded dynamically -->
@@ -26,11 +35,13 @@
 
 <body>
   <!-- Input fields for search key and mood -->
-  <header>
-    <input type="text" id="searchInput" placeholder="Enter search keyword">
-    <input type="text" id="moodInput" placeholder="Enter mood (e.g., cozy, lively)">
-    <button id="searchButton">Search</button>
-  </header>
+  <div class="container">
+    <div class="search-bar">
+      <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+      </div>
+    </div>
+  </div>
 
   <!-- Div for the map -->
   <div id="map"></div>
@@ -69,20 +80,18 @@
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
         const searchKey = inputField.value;
-        const mood = document.getElementById('moodInput').value;
-        makeNearbySearch(searchKey, mood);
-        makeNearbySearch(searchKey, mood);
+        makeNearbySearch(searchKey);
       });
     }
 
     // Function to make a Nearby Search request
-    function makeNearbySearch(searchKey, mood) {
+    function makeNearbySearch(searchKey) {
       var boulder = new google.maps.LatLng(40.015, -105.2705);
 
       var request = {
         location: boulder,
         radius: 40000, // 6 km radius around Boulder
-        keyword: `${searchKey} ${mood}`
+        keyword: `${searchKey}`
       };
 
       var service = new google.maps.places.PlacesService(map);
@@ -154,4 +163,3 @@
       });
   </script>
 </body>
-</html>
