@@ -146,11 +146,7 @@
       });
 
       // Set up event listener for the search button
-      document.getElementById('searchButton').addEventListener('click', function () {
-        const searchKey = inputField.value;
-        const mood = '';
-        makeNearbySearch(searchKey, mood);
-      });
+
 
       // Event listeners for mood buttons
       document.getElementById('cozyButton').addEventListener('click', function () {
@@ -170,7 +166,7 @@
       });
 
       document.getElementById('adventureButton').addEventListener('click', function () {
-        makeNearbySearch("boulder", "adventure");
+        makeNearbySearch("boulder", "adventurous");
       });
 
       document.getElementById('relaxButton').addEventListener('click', function () {
