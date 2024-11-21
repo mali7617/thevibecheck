@@ -46,17 +46,26 @@
       <div class="col-1"></div>
       <div class="col-4 rounded-5 bg-light border border-3 secondary">
         <h3 class="my-5">What's the mood today?</h3>
-        <div class="col">
-          <div class="row my-2 mx-3">
-            <button id="cozyButton" class="btn btn-danger bg-gradient p-2">Cozy</button>
-          </div>
-          <div class="row my-2 mx-3">
-            <button id="livelyButton" style="background-color: rgb(255, 146, 36);" class="btn btn bg-gradient text-white p-2">Lively</button>
-          </div>
-          <div class="row my-2 mx-3">
-            <button id="hungryButton" class="btn btn-primary bg-gradient p-2">Hungry</button>
-          </div>
-        </div>
+  <div class="col">
+     <div class="row my-2 mx-3">
+    <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Adventure</button>
+  </div>
+  <div class="row my-2 mx-3">
+    <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="btn text-white bg-gradient p-2">Cozy</button>
+  </div>
+  <div class="row my-2 mx-3">
+    <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="btn text-white bg-gradient p-2">Lively</button>
+  </div>
+  <div class="row my-2 mx-3">
+    <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="btn text-white bg-gradient p-2">Romantic</button>
+  </div>
+  <div class="row my-2 mx-3">
+    <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="btn text-white bg-gradient p-2">Hungry</button>
+  </div>
+  <div class="row my-2 mx-3">
+    <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Relaxed</button>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -94,9 +103,8 @@
 
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
-        const searchKey = inputField.value;
+        const searchKey = inputField.value ;
         const mood = document.getElementById('moodInput').value;
-        makeNearbySearch(searchKey, mood);
         makeNearbySearch(searchKey, mood);
       });
 
@@ -114,6 +122,15 @@
       document.getElementById('hungryButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "food");
       });
+         document.getElementById('romanceButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "romance");
+      });
+         document.getElementById('adventureButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "adventure");
+      });
+          document.getElementById('relaxButton').addEventListener('click', function () {
+        makeNearbySearch("boulder", "relax");
+      });
     }
 
     // Function to make a Nearby Search request
@@ -122,7 +139,7 @@
 
       var request = {
         location: boulder,
-        radius: 40000, // 6 km radius around Boulder
+        radius: 80000, 
         keyword: `${searchKey} ${mood}`
       };
 
