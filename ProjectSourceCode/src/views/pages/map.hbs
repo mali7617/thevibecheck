@@ -14,10 +14,13 @@
       width: 100%;
     }
 
+    /* Styles for the header input area */
     header {
       display: flex;
       gap: 10px;
       padding: 10px;
+      max-width: 800px;
+      margin: auto;
     }
 
     #searchInput,
@@ -25,8 +28,28 @@
       flex-grow: 1;
       padding: 5px;
     }
+
+    .search-bar {
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .search-bar .input-group {
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar .form-control {
+      border: none;
+      padding-left: 20px;
+    }
+
+    .search-bar .btn {
+      border: none;
+      padding: 10px 20px;
+    }
   </style>
-  <!-- API key script will be loaded dynamically -->
 </head>
 
 <body>
@@ -38,7 +61,7 @@
   </header>
 
   <!-- Div for the map and mood selector-->
-  <div class="container text-center my-5 ">
+  <div class="container text-center my-5">
     <div class="row">
       <div class="col-7">
         <div id="map"></div>
@@ -46,26 +69,26 @@
       <div class="col-1"></div>
       <div class="col-4 rounded-5 bg-light border border-3 secondary">
         <h3 class="my-5">What's the mood today?</h3>
-  <div class="col">
-     <div class="row my-2 mx-3">
-    <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Adventure</button>
-  </div>
-  <div class="row my-2 mx-3">
-    <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="btn text-white bg-gradient p-2">Cozy</button>
-  </div>
-  <div class="row my-2 mx-3">
-    <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="btn text-white bg-gradient p-2">Lively</button>
-  </div>
-  <div class="row my-2 mx-3">
-    <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="btn text-white bg-gradient p-2">Romantic</button>
-  </div>
-  <div class="row my-2 mx-3">
-    <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="btn text-white bg-gradient p-2">Hungry</button>
-  </div>
-  <div class="row my-2 mx-3">
-    <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Relaxed</button>
-  </div>
-</div>
+        <div class="col">
+          <div class="row my-2 mx-3">
+            <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Adventure</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="btn text-white bg-gradient p-2">Cozy</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="btn text-white bg-gradient p-2">Lively</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="btn text-white bg-gradient p-2">Romantic</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="btn text-white bg-gradient p-2">Hungry</button>
+          </div>
+          <div class="row my-2 mx-3">
+            <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Relaxed</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -103,38 +126,39 @@
 
       // Set up event listener for the search button
       document.getElementById('searchButton').addEventListener('click', function () {
-        const searchKey = inputField.value ;
+        const searchKey = inputField.value;
         const mood = document.getElementById('moodInput').value;
         makeNearbySearch(searchKey, mood);
       });
 
-      // Event listener for cozy button
+      // Event listeners for mood buttons
       document.getElementById('cozyButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "cozy");
       });
 
-      // Event listener for lively button
       document.getElementById('livelyButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "lively");
       });
 
-      // Event listener for hungry button
       document.getElementById('hungryButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "food");
       });
-         document.getElementById('romanceButton').addEventListener('click', function () {
+
+      document.getElementById('romanceButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "romance");
       });
-         document.getElementById('adventureButton').addEventListener('click', function () {
+
+      document.getElementById('adventureButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "adventure");
       });
-          document.getElementById('relaxButton').addEventListener('click', function () {
+
+      document.getElementById('relaxButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "relax");
       });
     }
 
     // Function to make a Nearby Search request
-    function makeNearbySearch(searchKey, mood) {
+    function makeNearbySearch(searchKey, mood = '') {
       var boulder = new google.maps.LatLng(40.015, -105.2705);
 
       var request = {
