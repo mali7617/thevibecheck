@@ -2,12 +2,14 @@
     display: flex;
     align-items: center;
 }
-
+body{
+  color: white;
+}
 .moodHeader {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: centers;
+    justify-content: center;
 }
 
 #navHeader {
