@@ -64,32 +64,16 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login', {layout: 'main2'})
+  res.render('pages/login', { layout: 'main2' })
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register', {register: 1, layout: 'main2'});
+  res.render('pages/register', { register: 1, layout: 'main2' });
 });
 
 app.get('/test', (req, res) => {
   res.redirect('/login');
   res.status(302);
-});
-
-app.get('/api/get-google-maps-key', async (req, res) => {
-  require('dotenv').config();
-  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
-  return keyFetch;
-});
-
-app.get('/account', (req, res) => {
-  res.render('pages/account', {
-    username: req.session.user.username,
-  });
-});
-
-app.get('/map', (req, res) => {
-  res.render('pages/map');
 });
 
 // Register
@@ -98,55 +82,49 @@ app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.pwd, 10);
   const query = 'INSERT INTO users (username, pwd) VALUES ($1, $2);';
   db.any(query, [
-    req.body.username, 
+    req.body.username,
     hash
   ]).then(data => {
-    if(req.body.test){
+    if (req.body.test) {
       res.status(200).json({
-          message: "Success"
-        });
-      }
-    else{
+        message: "Success"
+      });
+    }
+    else {
       res.redirect('/login');
     }
-    })
+  })
     .catch(error => {
-      if(req.body.test){
+      if (req.body.test) {
         res.status(400).json({
           message: "Invalid input"
         });
       }
-      else{
-        res.redirect('/register');
+      else {
+        res.render('pages/register', { message: `Invalid input or username already exists.`, error: true, layout: 'main2' });
       }
     });
 })
 
 // Login POST
-app.post('/login', async (req, res) =>{
+app.post('/login', async (req, res) => {
   const hash = await bcrypt.hash(req.body.pwd, 10);
   const query = 'select * from users where username = $1 limit 1;';
   db.any(query, req.body.username).then(async user => {
     user = user[0];
-
-        // check if password from request matches with password in DB
-        const match = await bcrypt.compare(req.body.pwd, user.pwd);
-        if (!match) {
-          res.render('pages/login', {message: `Incorrect username or password.`, error: true, layout: 'main2'});
-        } else {
-            req.session.user = user;
-            req.session.save();
-            res.redirect('/map');
-        }
-    }).catch(err => {
-      console.log(err);
-      res.redirect('/register');
-    });
-});
-
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.render('pages/logout', {layout: 'main2'});
+    // check if password from request matches with password in DB
+    const match = await bcrypt.compare(req.body.pwd, user.pwd);
+    if (!match) {
+      res.render('pages/login', { message: `Incorrect username or password.`, error: true, layout: 'main2' });
+    } else {
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/map');
+    }
+  }).catch(err => {
+    console.log(err);
+    res.redirect('/register');
+  });
 });
 
 const auth = (req, res, next) => {
@@ -156,25 +134,82 @@ const auth = (req, res, next) => {
   next();
 };
 
-app.use('/map', auth);
-  app.get('/map', (req, res) => {
-    res.render('pages/map');
+app.use(auth);
+
+app.get('/profile', (req, res) => {
+  try {
+    res.status(200).json({
+      username: req.session.user.username,
+    });
+  } catch (err) {
+    console.error('Profile error:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/logout', { layout: 'main2' });
+});
+
+app.get('/api/get-google-maps-key', async (req, res) => {
+  require('dotenv').config();
+  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
+  return keyFetch;
+});
+
+app.get('/map', (req, res) => {
+  if (req.session.user) {
+    res.render('pages/map', { username: req.session.user.username });
+  }
+  else {
+    res.redirect('login');
+  }
+});
+
+// get Reviews and Rating for location
+app.get('/mapInfo', (req, res) => {
+  const location = req.query.location;
+
+  db.task('get-everything', task => {
+    return task.batch([
+      task.any(`select avg(rating) 
+        from reviews inner join locations on reviews.location_id = locations.location_id
+        where location_name = '${location}';`),
+      task.any(`select username, mood_name, review 
+        from reviews inner join locations on reviews.location_id = locations.location_id
+        inner join moods on reviews.mood_id = moods.mood_id
+        inner join users on reviews.user_id = users.user_id
+        where location_name = '${location}';`)
+    ]);
+  })
+    .then(data => {
+      res.render('pages/map',
+        {
+          rating: data[0],
+          reviews: data[1],
+          location_name: location,
+          review: 1
+        });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+// Add Review to Location
+app.post('/addReview', (req, res) => {
+  const location = req.body.location;
+  const mood = req.body.mood;
+  const rating = req.body.rating;
+  const review = req.body.review;
+});
+
+app.get('/account', (req, res) => {
+  res.render('pages/account', {
+    username: req.session.user.username,
   });
-
-
-app.use('/profile', auth);
-
-  app.get('/profile', (req, res) => {
-    try {
-      res.status(200).json({
-        username: req.session.user.username,
-      });
-    } catch (err) {
-      console.error('Profile error:', err);
-      res.status(500).send('Internal Server Error');
-    }
-  });
-  
+});
 
 
 

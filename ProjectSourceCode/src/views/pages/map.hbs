@@ -5,57 +5,21 @@
   <title>Google Maps Search with Mood Filter</title>
   <style>
     /* Basic styles for layout */
-    body {
-      font-family: Arial, sans-serif;
-    }
 
     #map {
       height: 650px;
       width: 115%;
     }
 
-    /* Styles for the header input area */
-    header {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      max-width: 800px;
-      margin: auto;
-    }
-
     #searchInput,
     #moodInput {
       flex-grow: 1;
       padding: 5px;
+    }
+
     .search-bar {
       max-width: 500px;
       margin: auto auto;
-    }
-    .search-bar .input-group {
-        border-radius: 30px;
-        overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .search-bar .form-control {
-        border: none;
-        padding-left: 20px;
-    }
-
-    .search-bar .btn {
-        border: none;
-        padding: 10px 20px;
-    }
-
-    .search-bar {
-      max-width: 500px;
-      margin: auto;
-    }
-
-    .search-bar .input-group {
-      border-radius: 30px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     .search-bar .form-control {
@@ -67,10 +31,26 @@
       border: none;
       padding: 10px 20px;
     }
+
+    .search-bar {
+      max-width: 500px;
+      margin: auto;
+      padding-top: 20px;
+    }
+
+    .search-bar .input-group {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar .form-control {
+      border: none;
+      padding-left: 20px;
+    }
   </style>
 </head>
 
-<body>
 <body>
   <!-- Input fields for search key and mood -->
   <div class="container">
@@ -83,49 +63,131 @@
 
   <!-- Div for the map and mood selector -->
   <div class="container text-center my-5">
-  <div class="row">
-    <div class="col-7">
-      <div id="map"></div>
-    </div>
-    <div class="col-1"></div>
-    <div class="col-4 rounded-5 bg-light border border-3 secondary">
-      <h2 class="my-4">What's the mood today?</h2>
-      <div class="col">
-        <div class="row my-2 mx-3">
-          <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Adventure</button>
+    <div class="row">
+      <div class="col-7">
+        <div id="map"></div>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-4 rounded-3 border border-3 secondary">
+        {{#unless review}}
+        {{!-- Mood Selector Panel --}}
+        <div id="mood-panel">
+          <h2 class="my-4">What's the <span
+              style="font-weight:700; font-style:italic; color: rgb(255, 202, 28)">vibe</span> today?</h2>
+          <div class="col">
+            <div class="row my-2 mx-3">
+              <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);"
+                class="btn text-white bg-gradient p-2">Adventure</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);"
+                class="btn text-white bg-gradient p-2">Cozy</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);"
+                class="btn text-white bg-gradient p-2">Lively</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);"
+                class="btn text-white bg-gradient p-2">Romantic</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);"
+                class="btn text-white bg-gradient p-2">Hungry</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);"
+                class="btn text-white bg-gradient p-2">Relaxed</button>
+            </div>
+            <!-- New Mood Buttons -->
+            <div class="row my-2 mx-3">
+              <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);"
+                class="btn text-white bg-gradient p-2">Party</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);"
+                class="btn text-white bg-gradient p-2">Nature</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);"
+                class="btn text-white bg-gradient p-2">Cultural</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);"
+                class="btn text-white bg-gradient p-2">Workout</button>
+            </div>
+          </div>
         </div>
-        <div class="row my-2 mx-3">
-          <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="btn text-white bg-gradient p-2">Cozy</button>
+
+        {{else}}
+        {{!-- Review Panel --}}
+        <div id="review-panel text-start">
+          <div class="col">
+            <div class="text-end mt-2">
+              <form action="/map">
+                <input style="visibility:hidden" name="location" value={{location_name}}>
+                <button type="submit" class="bg-transparent text-secondary" style="border: none">X</button>
+              </form>
+            </div>
+            <h4 class="mt-1 text-center" style="font-weight: bold;">{{location_name}}</h4>
+            {{#if reviews.length}}
+              <h5 class="mb-2"><span style="font-weight: bold;">Rating: </span>{{rating}}</h5>
+            {{/if}}
+            <div class="row mx-3 text-start">
+              <h5 class="mb-1">Reviews</h5>
+              <div class="overflow-y-auto mx-auto" style="max-width: 90%;max-height: 70%">
+                {{#if reviews.length}}
+                {{#each }}
+                {{/each}}
+                {{else}}
+                <p>No Reviews.</p>
+                {{/if}}
+              </div>
+            </div>
+            <div class="row mx-3 text-start">
+              <h5 class="mb-1">Write a Review</h5>
+              <form action="/addReview" method="POST">
+                <input style="visibility:hidden" name="location" value={{location_name}}>
+
+                <label for="mood-select" class="form-label">Choose a mood for this location</label>
+                <select id="mood-select" class="form-select" name="mood" required>
+                  <option value="" selected>Select a mood</option>
+                  <option value="Adventure">Adventure</option>
+                  <option value="Cozy">Cozy</option>
+                  <option value="Lively">Lively</option>
+                  <option value="Romantic">Romantic</option>
+                  <option value="Hungry">Hungry</option>
+                  <option value="Relaxed">Relaxed</option>
+                  <option value="Party">Party</option>
+                  <option value="Nature">Nature</option>
+                  <option value="Cultural">Cultural</option>
+                  <option value="Workout">Workout</option>
+                </select>
+
+                <label for="location-rating" class="form-label my-1">Rate this location from 1-5</label>
+                <select id="location-rating" class="form-select" name="rating" required>
+                  <option selected value="">Select a rating</option>
+                  <option value=1>1</option>
+                  <option value=2>2</option>
+                  <option value=3>3</option>
+                  <option value=4>4</option>
+                  <option value=5>5</option>
+                </select>
+
+                <label for="review-text" class="form-label my-1">Review</label>
+                <textarea maxlength="250" class="form-control" id="review-text" rows="3" name="review" required></textarea>
+
+                <button type="submit" class="btn mt-3" style="background-color: rgb(255, 202, 28);">Submit</button>
+              </form>
+            </div>
+            <div class="row mx-3 text-start" style="padding-bottom: 20%;">
+            </div>
+          </div>
         </div>
-        <div class="row my-2 mx-3">
-          <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="btn text-white bg-gradient p-2">Lively</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="btn text-white bg-gradient p-2">Romantic</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="btn text-white bg-gradient p-2">Hungry</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="btn text-white bg-gradient p-2">Relaxed</button>
-        </div>
-        <!-- New Mood Buttons -->
-        <div class="row my-2 mx-3">
-          <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);" class="btn text-white bg-gradient p-2">Party</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);" class="btn text-white bg-gradient p-2">Nature</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);" class="btn text-white bg-gradient p-2">Cultural</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);" class="btn text-white bg-gradient p-2">Workout</button>
-        </div>
+        {{/unless}}
       </div>
     </div>
   </div>
-</div>
 
 
   <script>
@@ -134,6 +196,33 @@
     var infowindow;
     var autocomplete;
     var markers = [];
+
+    // Get Request for Reviews
+    function getReviewInfo(location_name, place_id) {
+      var form = document.createElement('form');
+      var location_input = document.createElement('input');
+      var location_id_input = document.createElement('input');
+      var button = document.createElement('button');
+      button.setAttribute('type', 'submit');
+
+      location_input.setAttribute('type', 'text');
+      location_input.setAttribute('name', 'location');
+      location_input.value = location_name;
+
+      location_id_input.setAttribute('type', 'text');
+      location__id_input.setAttribute('name', 'place_id');
+      location_id_input.value = place_id;
+
+      form.setAttribute('action', '/mapInfo');
+      form.setAttribute('method', 'get');
+      form.appendChild(location_input);
+      form.appendChild(location_id_input)''
+      form.appendChild(button);
+
+      document.body.append(form);
+
+      form.submit();
+    }
 
     // Initialize the map and autocomplete
     function initMap() {
@@ -159,11 +248,15 @@
         }
       });
 
-      // Set up event listener for the search button
+      // Set up event listener for the search bar
+      inputField.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          makeNearbySearch(inputField.value);
+        }
+      });
 
 
       // Event listeners for mood buttons
-           // Event listeners for mood buttons
       document.getElementById('cozyButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "cozy");
       });
@@ -214,7 +307,7 @@
 
       var request = {
         location: boulder,
-        radius: 80000, 
+        radius: 80000,
         keyword: `${searchKey} ${mood}`
 
       };
@@ -257,6 +350,7 @@
       google.maps.event.addListener(marker, 'click', function () {
         infowindow.setContent(place.name);
         infowindow.open(map, this);
+        getReviewInfo(place.name);
       });
     }
 
@@ -288,4 +382,3 @@
       });
   </script>
 </body>
-

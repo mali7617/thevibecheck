@@ -1,20 +1,21 @@
 <!DOCTYPE html>
+{{> message}}
 <div class="container d-flex justify-content-center">
     <div class="position-absolute top-50 start-50 translate-middle">
         <form action="/login" method="POST">
             <label for="title" style="font-size:xx-large; font-weight:bolder">Login</label><br>
             <label for="username" style="font-size:larger">Username</label><br>
 
-            <input name="username" type="text" id="username" class="form-control"><br>
+            <input name="username" type="text" id="username" class="form-control" required><br>
             <label for="password" style="font-size:larger">Password</label><br>
 
             <div class="row">
                 <div class="col-md-12">
-                    <input name="pwd" type="password" id="password" class="form-control">
+                    <input name="pwd" type="password" id="password" class="form-control" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Login</button>
+            <button type="submit" class="btn mt-3" style="background-color: rgb(255, 202, 28);">Login</button>
         </form>
         <p class="mt-3">
         Don't have an account? 
