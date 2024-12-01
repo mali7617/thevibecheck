@@ -12,7 +12,7 @@ create table moods(
 
 create table locations(
     location_id varchar(100) primary key,
-    location_name varchar(50) not null
+    location_name varchar(100) not null
 );
 
 create table reviews(

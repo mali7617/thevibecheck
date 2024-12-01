@@ -170,25 +170,29 @@ app.get('/map', (req, res) => {
 // get Reviews and Rating for location
 app.get('/mapInfo', (req, res) => {
   const location = req.query.location;
+  const location_id = req.query.place_id;
 
   db.task('get-everything', task => {
     return task.batch([
       task.any(`select avg(rating) 
         from reviews inner join locations on reviews.location_id = locations.location_id
-        where location_name = '${location}';`),
-      task.any(`select username, mood_name, review 
+        where reviews.location_id = '${location_id}';`),
+      task.any(`select username, mood_name, review, rating 
         from reviews inner join locations on reviews.location_id = locations.location_id
         inner join moods on reviews.mood_id = moods.mood_id
         inner join users on reviews.user_id = users.user_id
-        where location_name = '${location}';`)
+        where reviews.location_id = '${location_id}';`),
+      task.any(`insert into locations (location_id, location_name)
+        values ('${location_id}', '${location}') ON CONFLICT (location_id) DO NOTHING;`)
     ]);
   })
     .then(data => {
       res.render('pages/map',
         {
-          rating: data[0],
+          rating: parseFloat(data[0][0].avg).toFixed(2),
           reviews: data[1],
           location_name: location,
+          location_id: location_id,
           review: 1
         });
     })
@@ -199,10 +203,24 @@ app.get('/mapInfo', (req, res) => {
 
 // Add Review to Location
 app.post('/addReview', (req, res) => {
-  const location = req.body.location;
-  const mood = req.body.mood;
+  const location_id = req.body.place_id;
+  const mood_id = req.body.mood;
   const rating = req.body.rating;
   const review = req.body.review;
+
+  db.task('get-everything', task => {
+    return task.batch([
+      db.any(`insert into reviews (user_id, location_id, mood_id, rating, review)
+    values (${req.session.user.user_id}, '${location_id}', ${mood_id}, ${rating}, '${review}');`),
+      db.any(`select * from locations where location_id = '${location_id}';`)
+    ]);
+  })
+    .then(data => {
+      res.redirect('/mapInfo' + '?location=' + data[1][0].location_name + '&place_id=' + location_id);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 });
 
 app.get('/account', (req, res) => {
