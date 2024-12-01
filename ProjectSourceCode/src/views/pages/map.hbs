@@ -35,13 +35,16 @@
   <div class="container">
     <div class="search-bar">
       <div class="input-group">
-        <input style="border-color: rgb(255, 202, 28); border-width: 3px; border-radius: 30px" type="text" id="searchInput" class="form-control" placeholder=" Search...">
+        <input style="border-color: rgb(255, 202, 28); border-width: 3px; border-radius: 30px" type="text"
+          id="searchInput" class="form-control" placeholder=" Search...">
       </div>
     </div>
   </div>
 
   <!-- Div for the map and mood selector -->
   <div class="container text-center mt-3">
+    {{!-- link for get request review --}}
+    <a href="" id="reviewInfoLink"></a>
     <div class="row">
       <div class="col-7">
         <div id="map"></div>
@@ -106,7 +109,8 @@
             <div class="text-end mt-2">
               <form action="/map">
                 <input style="visibility:hidden" name="location" value={{location_name}}>
-                <button type="submit" class="bg-transparent text-secondary" style="border: none"><strong>X</strong></button>
+                <button type="submit" class="bg-transparent text-secondary"
+                  style="border: none"><strong>X</strong></button>
               </form>
             </div>
             <h4 class="mt-1 text-center" style="font-weight: bold;">{{location_name}}</h4>
@@ -121,9 +125,10 @@
                 <div class="card mx-auto my-2" style="width: 100%;">
                   <div class="card-body">
                     <h5 class="card-title">@{{this.username}}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Rating: {{this.rating}}</h6> 
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Rating: {{this.rating}}</h6>
                     <h6 class="card-subtitle mb-2 text-body-secondary">Mood: {{this.mood_name}}</h6>
-                    <p class="card-text px-2 border rounded" style="border-color: rgb(196, 196, 196);">{{this.review}}</p>
+                    <p class="card-text px-2 border rounded" style="border-color: rgb(196, 196, 196);">{{this.review}}
+                    </p>
                   </div>
                 </div>
                 {{/each}}
@@ -190,29 +195,9 @@
 
     // Get Request for Reviews
     function getReviewInfo(location_name, place_id) {
-      var form = document.createElement('form');
-      var location_input = document.createElement('input');
-      var location_id_input = document.createElement('input');
-      var button = document.createElement('button');
-      button.setAttribute('type', 'submit');
-
-      location_input.setAttribute('type', 'text');
-      location_input.setAttribute('name', 'location');
-      location_input.value = location_name;
-
-      location_id_input.setAttribute('type', 'text');
-      location_id_input.setAttribute('name', 'place_id');
-      location_id_input.value = place_id;
-
-      form.setAttribute('action', '/mapInfo');
-      form.setAttribute('method', 'get');
-      form.appendChild(location_input);
-      form.appendChild(location_id_input);
-      form.appendChild(button);
-
-      document.body.append(form);
-
-      form.submit();
+      link = document.getElementById("reviewInfoLink");
+      link.setAttribute('href', '/mapInfo?location=' + location_name + '&place_id=' + place_id);
+      link.click();
     }
 
     // Initialize the map and autocomplete
@@ -338,10 +323,15 @@
       // Extend the bounds to include each marker's location
       bounds.extend(place.geometry.location);
 
+      //get review info when click
       google.maps.event.addListener(marker, 'click', function () {
+        getReviewInfo(place.name, place.place_id);
+      });
+
+      // show place name when hover
+      google.maps.event.addListener(marker, 'mouseover', function () {
         infowindow.setContent(place.name);
         infowindow.open(map, this);
-        getReviewInfo(place.name, place.place_id);
       });
     }
 

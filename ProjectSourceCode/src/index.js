@@ -190,10 +190,11 @@ app.get('/mapInfo', (req, res) => {
       res.render('pages/map',
         {
           rating: parseFloat(data[0][0].avg).toFixed(2),
-          reviews: data[1],
+          reviews: data[1].reverse(),
           location_name: location,
           location_id: location_id,
-          review: 1
+          review: 1,
+          username: req.session.user.username
         });
     })
     .catch(err => {
