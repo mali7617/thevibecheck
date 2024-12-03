@@ -9,32 +9,37 @@
         </defs>
     </svg>
     <div class="gradients-container">
-        <div class="g1 g2 g3 g4 g5 interactive"></div>
+        <div class="g1"></div>
+        <div class="g2"></div>
+        <div class="g3"></div>
+        <div class="g4"></div>
+        <div class="g5"></div>
+        <div class="interactive"></div>
     </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded', () => {
-const interBubble = document.querySelector('.interactive');
-console.log(interBubble);
-let curX = 0;
-let curY = 0;
-let tgX = 0;
-let tgY = 0;
+    document.addEventListener('DOMContentLoaded', () => {
+    const interBubble = document.querySelector('.interactive');
+    console.log(interBubble);
+    let curX = 0;
+    let curY = 0;
+    let tgX = 0;
+    let tgY = 0;
 
-function move() {
-    curX += (tgX - curX) / 20;
-    curY += (tgY - curY) / 20;
-    interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
-    requestAnimationFrame(() => {
-        move();
+    function move() {
+        curX += (tgX - curX) / 20;
+        curY += (tgY - curY) / 20;
+        interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+        requestAnimationFrame(() => {
+            move();
+        });
+    }
+
+    window.addEventListener('mousemove', (event) => {
+        tgX = event.clientX;
+        tgY = event.clientY;
     });
-}
 
-window.addEventListener('mousemove', (event) => {
-    tgX = event.clientX;
-    tgY = event.clientY;
-});
-
-move();
-});
+    move();
+    });
 </script>
