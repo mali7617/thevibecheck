@@ -1,7 +1,7 @@
 import './css/style.scss'
 
 document.addEventListener('DOMContentLoaded', () => {
-    const interBubble = document.querySelector<HTMLDivElement>('.interactive');
+    const interBubble = document.querySelector<HTMLDivElement>('.interactive')!;
     let curX = 0;
     let curY = 0;
     let tgX = 0;
