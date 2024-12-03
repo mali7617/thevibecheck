@@ -89,7 +89,12 @@ app.get('/account', (req, res) => {
 });
 
 app.get('/map', (req, res) => {
-  res.render('pages/map');
+  if (req.session.user) {
+    res.render('pages/map', { username: req.session.user.username });
+  }
+  else {
+    res.redirect('login');
+  }
 });
 
 // Register

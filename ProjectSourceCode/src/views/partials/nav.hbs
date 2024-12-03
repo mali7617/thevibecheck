@@ -1,7 +1,9 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-      <a class="navbar-brand" href="/"></a>
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="https://i.pinimg.com/736x/80/1c/3a/801c3ae95257f999ab01d8423aaa0257.jpg" alt="Logo" style="height: 40px;">
+      </a>
       <ul class="navbar-nav mx-auto">
         <li class="nav-item">
             <a class="nav-link" href="/map">Map</a>
@@ -13,5 +15,8 @@
             <a class="nav-link" href="/logout">Log out</a>
         </li>
       </ul>
+      <div class="navbar-text">
+        <p class="my-auto text-secondary navbar-username" style="padding-right: 1.5%">{{username}}</p>
+      </div>
     </div>
 </header>
