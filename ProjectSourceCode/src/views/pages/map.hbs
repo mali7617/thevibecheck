@@ -1,76 +1,75 @@
 <!DOCTYPE html>
 
-
-<head>
-  <title>Google Maps Search with Mood Filter</title>
-  <style>
-    /* Basic styles for layout */
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    
-  </style>
-</head>
-
-<body>
 <body>
   <!-- Input fields for search key and mood -->
-  <div class="container">
-    <div class="search-bar">
-      <div class="input-group">
-        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
-      </div>
+  <div class="gradient-bg">
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="gradients-container">
+        <div class="g1 g2 g3 g4 g5 interactive"></div>
+        <div class="container">
+          <div class="search-bar">
+            <div class="input-group">
+              <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+            </div>
+          </div>
+          <div class="container text-center my-5">
+            <div class="row">
+              <div class="col-7">
+                <div id="map"></div>
+              </div>
+              <div class="col-1"></div>
+              <div class="col-4 rounded-5 bg-light border border-3 secondary">
+                <h2 class="my-4">What's the mood today?</h2>
+                <div class="col">
+                  <div class="row my-2 mx-3">
+                    <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Adventure</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cozy</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Lively</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Romantic</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Hungry</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Relaxed</button>
+                  </div>
+                  <!-- New Mood Buttons -->
+                  <div class="row my-2 mx-3">
+                    <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Party</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Nature</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cultural</button>
+                  </div>
+                  <div class="row my-2 mx-3">
+                    <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Workout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
+  </div>
+  
   </div>
 
   <!-- Div for the map and mood selector -->
-  <div class="container text-center my-5">
-  <div class="row">
-    <div class="col-7">
-      <div id="map"></div>
-    </div>
-    <div class="col-1"></div>
-    <div class="col-4 rounded-5 bg-light border border-3 secondary">
-      <h2 class="my-4">What's the mood today?</h2>
-      <div class="col">
-        <div class="row my-2 mx-3">
-          <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Adventure</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cozy</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Lively</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Romantic</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Hungry</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Relaxed</button>
-        </div>
-        <!-- New Mood Buttons -->
-        <div class="row my-2 mx-3">
-          <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Party</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Nature</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cultural</button>
-        </div>
-        <div class="row my-2 mx-3">
-          <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Workout</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
   <script>
     var map;
     var service;

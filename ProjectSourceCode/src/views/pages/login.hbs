@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <div class="container d-flex justify-content-center">
-    <div class="position-absolute top-50 start-50 translate-middle">
+    <div class="position-absolute top-50 start-50 translate-middle" 
+    style = 
+    "background-color: white; padding: 30px;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    max-height: 400px;
+    height: 100%;">
         <form action="/login" method="POST">
             <label for="title">Login</label><br>
             <label for="username">Username</label>
-            <input name="username" type="text" id="username" class="form-control">
+            <input name="username" type="text" id="username" class="form-control"><br>
             <label for="password">Password</label>
             <input name="pwd" type="password" id="password" class="form-control">
             <button type="submit" class="logbtn btn btn-primary mt-3">Login</button>
