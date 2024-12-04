@@ -1,77 +1,244 @@
 <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Maps Search with Mood Filter</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .background-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .gradient-bg {
+      filter: blur(10px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1; /* Make sure the background is behind everything else */
+    }
+
+    .search-mood-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 20px;
+      margin-top: 10px;
+      z-index: 1; /* Ensure the search bar stays on top */
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .search-bar input {
+      flex-grow: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .search-bar input:focus {
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .search-bar button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4a90e2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-bar button:hover {
+      background-color: #357ab7;
+    }
+
+    .mood-bar {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0);
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: calc(100vh - 60px);
+      width: 150px;
+      z-index: 1; /* Ensure mood bar stays on top */
+    }
+
+    .mood-bar button {
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .mood-bar button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Specific button colors for moods */
+    #adventureButton {
+      background-color: #4682b4;
+    }
+
+    #cozyButton {
+      background-color: #3cb371;
+    }
+
+    #livelyButton {
+      background-color: #ffa500;
+    }
+
+    #romanceButton {
+      background-color: #dc143c;
+    }
+
+    #hungryButton {
+      background-color: #4b0082;
+    }
+
+    #relaxButton {
+      background-color: #7b68ee;
+    }
+
+    #artisticButton {
+      background-color: #9400d3;
+    }
+
+    #culturalButton {
+      background-color: #4e4e8b;
+    }
+
+    #festiveButton {
+      background-color: #ff4500;
+    }
+
+    #celebrateButton {
+      background-color: #ff69b4;
+    }
+
+    #wellnessButton {
+      background-color: #df98fb;
+    }
+
+    #sportButton {
+      background-color: #1e90ff;
+    }
+
+    #educationalButton {
+      background-color: #ffd700;
+      color: black;
+    }
+
+    #tiredButton {
+      background-color: #808080;
+    }
+
+    #socialButton {
+      background-color: #ff6347;
+    }
+
+    #map-container {
+      margin-left: 150px;
+      margin-top: 5px;
+      width: calc(100% - 150px);
+      height: calc(100vh - 60px);
+      z-index: 1; /* Ensure the map stays on top */
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
 
 <body>
-  <!-- Input fields for search key and mood -->
-  <div class="gradient-bg">
-    <svg xmlns="http://www.w3.org/2000/svg">
+  <div class="background-container">
+    <div class="gradient-bg">
+      <svg xmlns="http://www.w3.org/2000/svg">
         <defs>
-            <filter id="goo">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
-                <feBlend in="SourceGraphic" in2="goo" />
-            </filter>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 18 -8" result="goo" />
+            <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
         </defs>
-    </svg>
-    <div class="gradients-container">
-        <div class="g1"></div>
-        <div class="g2"></div>
-        <div class="g3"></div>
-        <div class="g4"></div>
-        <div class="g5"></div>
-        <div class="interactive"></div>
-        <div class="container">
-          <div class="search-bar">
-            <div class="input-group">
-              <input type="text" id="searchInput" class="form-control" placeholder="Search...">
-            </div>
-          </div>
-          <div class="container text-center my-5">
-            <div class="row">
-              <div class="col-7">
-                <div id="map"></div>
-              </div>
-              <div class="col-1"></div>
-              <div class="col-4 rounded-5 bg-light border border-3 secondary">
-                <h2 class="my-4">What's the mood today?</h2>
-                <div class="col">
-                  <div class="row my-2 mx-3">
-                    <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Adventure</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cozy</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Lively</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Romantic</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Hungry</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Relaxed</button>
-                  </div>
-                  <!-- New Mood Buttons -->
-                  <div class="row my-2 mx-3">
-                    <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Party</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Nature</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Cultural</button>
-                  </div>
-                  <div class="row my-2 mx-3">
-                    <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);" class="moodbtn btn text-white bg-gradient p-2">Workout</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      </svg>
     </div>
   </div>
-  
+
+  <div class="gradients-container">
+    <div class="container">
+      <div class="search-mood-bar">
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search...">
+          <button>Search</button>
+        </div>
+      </div>
+
+      <!-- Mood Bar on the Left -->
+      <div class="mood-bar">
+        <button id="adventureButton">Adventure</button>
+        <button id="cozyButton">Cozy</button>
+        <button id="livelyButton">Lively</button>
+        <button id="romanceButton">Romantic</button>
+        <button id="hungryButton">Hungry</button>
+        <button id="relaxButton">Relaxed</button>
+        <button id="artisticButton">Artistic</button>
+        <button id="culturalButton">Cultural</button>
+        <button id="festiveButton">Festive</button>
+        <button id="celebrateButton">Celebration</button>
+        <button id="wellnessButton">Wellness</button>
+        <button id="sportButton">Sports</button>
+      </div>
+
+      <!-- Map -->
+      <div id="map-container">
+        <div id="map"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Div for the map and mood selector -->
