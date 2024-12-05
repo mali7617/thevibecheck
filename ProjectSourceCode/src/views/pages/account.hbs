@@ -1,47 +1,6 @@
 <!DOCTYPE html>
-<head>
-    <style>
-        .navbar {
-            background-color: rgba(0, 0, 0, 0); /* Slight transparency */
-            border-radius: 3vw;
-            padding: 1em;
-            z-index: 100;
-        }
-        .nav-link {
-            color: #FFFFFF; /* White color for high contrast */
-            font-family: 'Playfair Display', serif, 'arial';
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.7); /* Subtle black shadow for better contrast */
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-        }
-        .nav-link:hover {
-        color: #FF4500 !important; /* Orange for visibility and contrast on hover */
-        text-shadow: 0 0 10px rgba(255, 69, 0, 0.8), 0 0 15px rgba(255, 69, 0, 0.8); /* Glow effect on hover */
-        }
-        .navbar-username {
-            color: #ffffff; /* White color for high contrast */
-            font-family: 'Playfair Display', serif, 'arial';
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
 <body>
-    <div class="position-absolute top-50 start-50 translate-middle" 
-    style = 
-    "text-align: center;
-    background-color: rgba(253, 248, 237, 0.9);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 400px;">
-        <div class="title mb-3" style="font-size: 36px; font-weight: bold;">Account Information</div>
-        <p><strong>Username: </strong>{{username}}</p>
-        <button onclick="window.location.href='/logout'" class="btn btn-secondary mt-3">Logout</button>
-    </div>
-    <div class="gradient-bg" style="position: absolute;">
+    <div class="gradient-bg">
         <svg xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <filter id="goo">
@@ -58,6 +17,19 @@
             <div class="g4"></div>
             <div class="g5"></div>
             <div class="interactive"></div>
+        </div>
+        <div class="position-absolute top-50 start-50 translate-middle" 
+        style = 
+        "text-align: center;
+        background-color: rgba(253, 248, 237, 0.9);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 400px;">
+            <div class="title mb-3" style="font-size: 36px; font-weight: bold;">Account Information</div>
+            <p><strong>Username: </strong>{{username}}</p>
+            <button onclick="window.location.href='/logout'" class="btn btn-secondary mt-3">Logout</button>
         </div>
     </div>
 
