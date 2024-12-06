@@ -5,7 +5,6 @@
   <title>Google Maps Search with Mood Filter</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
       display: flex;
@@ -26,6 +25,22 @@
       left: 30vh;
       z-index: 1; /* Ensure the search bar stays on top */
     }
+
+    #searchInput,
+    #moodInput {
+      flex-grow: 1;
+      padding: 5px;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      margin: auto;
+      padding-top: 20px;
+    }
+
+    .search-bar .input-group {
+      border-radius: 30px;
+      overflow: hidden;
 
     .search-bar {
       display: flex;
@@ -200,14 +215,162 @@
         <div class="interactive"></div>
     </div>
     <div class="container">
+    <div class="search-bar">
+      <div class="input-group">
+        <input style="border-color: rgb(255, 202, 28); border-width: 3px; border-radius: 30px" type="text"
+          id="searchInput" class="form-control" placeholder=" Search...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Div for the map and mood selector -->
+  <div class="container text-center mt-3">
+    {{!-- link for get request review --}}
+    <a href="" id="reviewInfoLink"></a>
+    <div class="row">
+      <div class="col-7">
+        <div id="map"></div>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-4 rounded-3 border border-3 secondary">
+        {{#unless review}}
+        {{!-- Mood Selector Panel --}}
+        <div id="mood-panel">
+          <h2 class="my-4">What's the <span
+              style="font-weight:700; font-style:italic; color: rgb(255, 202, 28)">vibe</span> today?</h2>
+          <div class="col">
+            <div class="row my-2 mx-3">
+              <button id="adventureButton" style="background-color: rgba(70, 130, 180, 0.85);"
+                class="btn text-white bg-gradient p-2">Adventure</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="cozyButton" style="background-color: rgba(60, 179, 113, 0.85);"
+                class="btn text-white bg-gradient p-2">Cozy</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="livelyButton" style="background-color: rgba(255, 165, 0, 0.85);"
+                class="btn text-white bg-gradient p-2">Lively</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="romanceButton" style="background-color: rgba(220, 20, 60, 0.85);"
+                class="btn text-white bg-gradient p-2">Romantic</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="hungryButton" style="background-color: rgba(75, 0, 130, 0.85);"
+                class="btn text-white bg-gradient p-2">Hungry</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="relaxButton" style="background-color: rgba(70, 130, 180, 0.85);"
+                class="btn text-white bg-gradient p-2">Relaxed</button>
+            </div>
+            <!-- New Mood Buttons -->
+            <div class="row my-2 mx-3">
+              <button id="partyButton" style="background-color: rgba(255, 0, 255, 0.85);"
+                class="btn text-white bg-gradient p-2">Party</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="natureButton" style="background-color: rgba(34, 139, 34, 0.85);"
+                class="btn text-white bg-gradient p-2">Nature</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="culturalButton" style="background-color: rgba(128, 0, 128, 0.85);"
+                class="btn text-white bg-gradient p-2">Cultural</button>
+            </div>
+            <div class="row my-2 mx-3">
+              <button id="workoutButton" style="background-color: rgba(255, 99, 71, 0.85);"
+                class="btn text-white bg-gradient p-2">Workout</button>
+            </div>
+            <div class="row mx-3 text-start" style="padding-bottom: 10%;"></div>
+          </div>
+        </div>
+
+        {{else}}
+        {{!-- Review Panel --}}
+        <div id="review-panel text-start">
+          <div class="col">
+            <div class="text-end mt-2">
+              <form action="/map">
+                <input style="visibility:hidden" name="location" value={{location_name}}>
+                <button type="submit" class="bg-transparent text-secondary"
+                  style="border: none"><strong>X</strong></button>
+              </form>
+            </div>
+            <h4 class="mt-1 text-center" style="font-weight: bold;">{{location_name}}</h4>
+            {{#if reviews.length}}
+            <h5 class="mb-2"><span style="font-weight: bold;">Rating: </span>{{rating}}</h5>
+            {{/if}}
+            <div class="row mx-3 text-start">
+              <h5 class="mb-1">Reviews</h5>
+              <div class="overflow-y-scroll mr-auto" style="max-width: 100%; max-height: 300px">
+                {{#if reviews.length}}
+                {{#each reviews}}
+                <div class="card mx-auto my-2" style="width: 100%;">
+                  <div class="card-body">
+                    <h5 class="card-title">@{{this.username}}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Rating: {{this.rating}}</h6>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Mood: {{this.mood_name}}</h6>
+                    <p class="card-text px-2 border rounded" style="border-color: rgb(196, 196, 196);">{{this.review}}
+                    </p>
+                  </div>
+                </div>
+                {{/each}}
+                {{else}}
+                <p>No Reviews.</p>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="row mx-3 mt-3 text-start">
+              <h5 class="mb-1">Write a Review</h5>
+              <form action="/addReview" method="POST">
+                <input type="hidden" name="location" value={{location_name}}>
+                <input type="hidden" name="place_id" value={{location_id}}>
+
+                <label for="mood-select" class="form-label">Choose a mood for this location</label>
+                <select id="mood-select" class="form-select" name="mood" required>
+                  <option value="" selected>Select a mood</option>
+                  <option value=1>Adventure</option>
+                  <option value=2>Cozy</option>
+                  <option value=3>Lively</option>
+                  <option value=4>Romantic</option>
+                  <option value=5>Hungry</option>
+                  <option value=6>Relaxed</option>
+                  <option value=7>Party</option>
+                  <option value=8>Nature</option>
+                  <option value=9>Cultural</option>
+                  <option value=10>Workout</option>
+                </select>
+
+                <label for="location-rating" class="form-label my-1">Rate this location from 1-5</label>
+                <select id="location-rating" class="form-select" name="rating" required>
+                  <option selected value="">Select a rating</option>
+                  <option value=1>1</option>
+                  <option value=2>2</option>
+                  <option value=3>3</option>
+                  <option value=4>4</option>
+                  <option value=5>5</option>
+                </select>
+
+                <label for="review-text" class="form-label my-1">Review</label>
+                <textarea maxlength="250" class="form-control" id="review-text" rows="3" name="review"
+                  required></textarea>
+
+                <button type="submit" class="btn mt-3" style="background-color: rgb(255, 202, 28);">Submit</button>
+              </form>
+            </div>
+
+            <div class="row mx-3 text-start" style="padding-bottom: 10%;"></div>
+          </div>
+    <div class="container">
       <div class="search-mood-bar">
         <div class="search-bar">
           <input type="text" id="searchInput" placeholder="What's the vibe today?">
           <button>Search</button>
         </div>
+        {{/unless}}
       </div>
       
-      <!-- Mood Bar on the Left -->
+      {{!-- <!-- Mood Bar on the Left -->
       <div class="mood-bar">
         <button id="adventureButton">Adventure</button>
         <button id="cozyButton">Cozy</button>
@@ -224,20 +387,24 @@
       </div>
       <div id="map-container">
         <div id="map"></div>
-      </div>
+      </div> --}}
     </div>
       <!-- Map -->
       
   </div>
-  </div>
-  
-  <!-- Div for the map and mood selector -->
   <script>
     var map;
     var service;
     var infowindow;
     var autocomplete;
     var markers = [];
+
+    // Get Request for Reviews
+    function getReviewInfo(location_name, place_id) {
+      link = document.getElementById("reviewInfoLink");
+      link.setAttribute('href', '/mapInfo?location=' + location_name + '&place_id=' + place_id);
+      link.click();
+    }
 
     // Initialize the map and autocomplete
     function initMap() {
@@ -263,11 +430,15 @@
         }
       });
 
-      // Set up event listener for the search button
+      // Set up event listener for the search bar
+      inputField.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          makeNearbySearch(inputField.value);
+        }
+      });
 
 
       // Event listeners for mood buttons
-           // Event listeners for mood buttons
       document.getElementById('cozyButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "cozy");
       });
@@ -318,7 +489,7 @@
 
       var request = {
         location: boulder,
-        radius: 80000, 
+        radius: 80000,
         keyword: `${searchKey} ${mood}`
 
       };
@@ -358,7 +529,13 @@
       // Extend the bounds to include each marker's location
       bounds.extend(place.geometry.location);
 
+      //get review info when click
       google.maps.event.addListener(marker, 'click', function () {
+        getReviewInfo(place.name, place.place_id);
+      });
+
+      // show place name when hover
+      google.maps.event.addListener(marker, 'mouseover', function () {
         infowindow.setContent(place.name);
         infowindow.open(map, this);
       });
@@ -418,4 +595,3 @@
     });
   </script>
 </body>
-
