@@ -89,7 +89,9 @@ app.get('/account', (req, res) => {
 });
 
 app.get('/map', (req, res) => {
-  res.render('pages/map');
+  res.render('pages/map', {
+    username: req.session.user.username,
+  });
 });
 
 

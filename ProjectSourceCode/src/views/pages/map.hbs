@@ -1,11 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <title>Google Maps Search with Mood Filter</title>
   <style>
-    /* Basic styles for layout */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vh;
+      overflow: hidden;
+    }
+
+    .search-mood-bar {
+      font-family: "Lato", sans-serif;
+      display: flex;
+      padding: 10px 20px;
+      margin-top: 10px;
+      position: fixed;
+      top: 60px;
+      width: 100%;
+      left: 30vh;
+      z-index: 1; /* Ensure the search bar stays on top */
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .search-bar input {
+      flex-grow: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 14px;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .search-bar input:focus {
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .search-bar button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4a90e2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-bar button:hover {
+      background-color: #357ab7;
+    }
+
+    .mood-bar {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0);
+      position: fixed;
+      top: 85px;
+      left: 50px;
+      height: 100vh;
+      width: 150px;
+      z-index: 1; /* Ensure mood bar stays on top */
+    }
+
+    .mood-bar button {
+      font-family: "Lato", sans-serif;
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .mood-bar button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Specific button colors for moods */
+    #adventureButton {
+      background-color: #4682b4;
+    }
+
+    #cozyButton {
+      background-color: #3cb371;
+    }
+
+    #livelyButton {
+      background-color: #ffa500;
+    }
+
+    #romanceButton {
+      background-color: #dc143c;
+    }
+
+    #hungryButton {
+      background-color: #4b0082;
+    }
+
+    #relaxButton {
+      background-color: #7b68ee;
+    }
+
+    #artisticButton {
+      background-color: #9400d3;
+    }
+
+    #culturalButton {
+      background-color: #4e4e8b;
+    }
+
+    #festiveButton {
+      background-color: #ff4500;
+    }
+
+    #celebrateButton {
+      background-color: #ff69b4;
+    }
+
+    #wellnessButton {
+      background-color: #df98fb;
+    }
+
+    #sportButton {
+      background-color: #1e90ff;
+    }
+
+    #educationalButton {
+      background-color: #ffd700;
+      color: black;
+    }
+
+    #tiredButton {
+      background-color: #808080;
+    }
+
+    #socialButton {
+      background-color: #ff6347;
+    }
+
+    #map-container {
+      margin-left: 155px;
+      margin-top: 5vh;
+      bottom: 100px;
+      position: fixed;
+      top: 15vh;
+      width: 1000px;
+      z-index: 1; /* Ensure the map stays on top */
+    }
+
     #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Basic styles for layout */
+    /* #map {
       height: 650px;
       width: 115%;
     }
@@ -24,12 +195,37 @@
 
     .search-bar .input-group {
       border-radius: 30px;
-      overflow: hidden;
+      overflow: hidden; */
     }
   </style>
 </head>
 
-<body style="padding-bottom: 85%;">
+<body>
+  
+  <div class="gradient-bg">
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
+    <div class="gradients-container">
+        <div class="g1"></div>
+        <div class="g2"></div>
+        <div class="g3"></div>
+        <div class="g4"></div>
+        <div class="g5"></div>
+        <div class="interactive"></div>
+    </div>
+    <div class="container">
+      <div class="search-mood-bar">
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="What's the vibe today?">
+          <button>Search</button>
+{{!-- <body style="padding-bottom: 85%;">
   <!-- Input fields for search key and mood -->
   <div class="container">
     <div class="search-bar">
@@ -177,14 +373,36 @@
             </div>
 
             <div class="row mx-3 text-start" style="padding-bottom: 10%;"></div>
-          </div>
+          </div> 
         </div>
-        {{/unless}}
+        {{/unless}} --}}
+      </div>
+      
+      <!-- Mood Bar on the Left -->
+      <div class="mood-bar">
+        <button id="adventureButton">Adventure</button>
+        <button id="cozyButton">Cozy</button>
+        <button id="livelyButton">Lively</button>
+        <button id="romanceButton">Romantic</button>
+        <button id="hungryButton">Hungry</button>
+        <button id="relaxButton">Relaxed</button>
+        <button id="artisticButton">Artistic</button>
+        <button id="culturalButton">Cultural</button>
+        <button id="festiveButton">Festive</button>
+        <button id="celebrateButton">Celebration</button>
+        <button id="wellnessButton">Wellness</button>
+        <button id="sportButton">Sports</button>
+      </div>
+      <div id="map-container">
+        <div id="map"></div>
       </div>
     </div>
+      <!-- Map -->
+      
   </div>
-
-
+  </div>
+  
+  <!-- Div for the map and mood selector -->
   <script>
     var map;
     var service;
@@ -360,5 +578,31 @@
       .catch(error => {
         console.error('Error fetching API key:', error);
       });
+  </script>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+    const interBubble = document.querySelector('.interactive');
+    console.log(interBubble);
+    let curX = 0;
+    let curY = 0;
+    let tgX = 0;
+    let tgY = 0;
+
+    function move() {
+        curX += (tgX - curX) / 20;
+        curY += (tgY - curY) / 20;
+        interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+        requestAnimationFrame(() => {
+            move();
+        });
+    }
+
+    window.addEventListener('mousemove', (event) => {
+        tgX = event.clientX;
+        tgY = event.clientY;
+    });
+
+    move();
+    });
   </script>
 </body>

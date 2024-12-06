@@ -1,7 +1,63 @@
 <!DOCTYPE html>
-<div class="position-absolute top-50 start-50 translate-middle" style="text-align: center">
-    <div class="title mb-3" style="font-size: 36px; font-weight: bold;">Account</div>
-    <p><strong>Username: </strong>{{username}}</p>
+<body>
+    <div class="gradient-bg">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+                    <feBlend in="SourceGraphic" in2="goo" />
+                </filter>
+            </defs>
+        </svg>
+        <div class="gradients-container">
+            <div class="g1"></div>
+            <div class="g2"></div>
+            <div class="g3"></div>
+            <div class="g4"></div>
+            <div class="g5"></div>
+            <div class="interactive"></div>
+        </div>
+        <div class="position-absolute top-50 start-50 translate-middle" 
+        style = 
+        "text-align: center;
+        background-color: rgba(253, 248, 237, 0.9);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 400px;">
+            <div class="title mb-3" style="font-size: 36px; font-weight: bold;">Account Information</div>
+            <p><strong>Username: </strong>{{username}}</p>
+            <button onclick="window.location.href='/logout'" class="btn btn-secondary mt-3">Logout</button>
+        </div>
+    </div>
 
-    <button onclick="window.location.href='/logout'" class="btn mt-3" style="background-color: rgb(255, 202, 28);">Logout</button>
-</div>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+        const interBubble = document.querySelector('.interactive');
+        console.log(interBubble);
+        let curX = 0;
+        let curY = 0;
+        let tgX = 0;
+        let tgY = 0;
+
+        function move() {
+            curX += (tgX - curX) / 20;
+            curY += (tgY - curY) / 20;
+            interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+            requestAnimationFrame(() => {
+                move();
+            });
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            tgX = event.clientX;
+            tgY = event.clientY;
+        });
+
+        move();
+        });
+    </script>
+
+</body>
