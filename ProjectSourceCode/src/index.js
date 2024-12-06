@@ -17,7 +17,7 @@ const hbs = handlebars.create({
 });
 
 const dbConfig = {
-host: process.env.POSTGRES_HOST, 
+host: 'db',
 port: process.env.POSTGRES_PORT, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
@@ -204,13 +204,12 @@ app.get('/mapInfo', (req, res) => {
     ]);
   })
     .then(data => {
-      res.render('pages/map',
+      res.render('pages/mapReview',
         {
           rating: parseFloat(data[0][0].avg).toFixed(2),
           reviews: data[1].reverse(),
           location_name: location,
           location_id: location_id,
-          review: 1,
           username: req.session.user.username
         });
     })

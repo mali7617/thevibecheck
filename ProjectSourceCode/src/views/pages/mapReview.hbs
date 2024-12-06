@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Google Maps Search with Mood Filter</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vh;
+            overflow: hidden;
+        }
+
+        .search-mood-bar {
+            font-family: "Lato", sans-serif;
+            display: flex;
+            padding: 10px 20px;
+            margin-top: 5vh;
+            position: fixed;
+            top: 60px;
+            width: 100%;
+            left: 27vh;
+            z-index: 1;
+            /* Ensure the search bar stays on top */
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .search-bar button {
+            padding: 8px 15px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a90e2;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #357ab7;
+        }
+
+        .mood-bar {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0);
+            position: fixed;
+            top: 30vh;
+            left: 50px;
+            height: 100vh;
+            width: 150px;
+            z-index: 1;
+            /* Ensure mood bar stays on top */
+        }
+
+        .mood-bar button {
+            font-family: "Lato", sans-serif;
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .mood-bar button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Specific button colors for moods */
+        #adventureButton {
+            background-color: #4682b4;
+        }
+
+        #cozyButton {
+            background-color: #3cb371;
+        }
+
+        #livelyButton {
+            background-color: #ffa500;
+        }
+
+        #romanceButton {
+            background-color: #dc143c;
+        }
+
+        #hungryButton {
+            background-color: #4b0082;
+        }
+
+        #relaxButton {
+            background-color: #7b68ee;
+        }
+
+        #artisticButton {
+            background-color: #9400d3;
+        }
+
+        #culturalButton {
+            background-color: #4e4e8b;
+        }
+
+        #festiveButton {
+            background-color: #ff4500;
+        }
+
+        #celebrateButton {
+            background-color: #ff69b4;
+        }
+
+        #wellnessButton {
+            background-color: #df98fb;
+        }
+
+        #sportButton {
+            background-color: #1e90ff;
+        }
+
+        #educationalButton {
+            background-color: #ffd700;
+            color: black;
+        }
+
+        #tiredButton {
+            background-color: #808080;
+        }
+
+        #socialButton {
+            background-color: #ff6347;
+        }
+
+        #foreground{
+            margin-left: 15vh;
+            bottom: 20vh;
+            position: fixed;
+            top: 20vh;
+            z-index: 1;
+            height: 75%;
+            overflow-y:scroll;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gradient-bg">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
+                        result="goo" />
+                    <feBlend in="SourceGraphic" in2="goo" />
+                </filter>
+            </defs>
+        </svg>
+        <div class="gradients-container">
+            <div class="g1"></div>
+            <div class="g2"></div>
+            <div class="g3"></div>
+            <div class="g4"></div>
+            <div class="g5"></div>
+            <div class="interactive"></div>
+        </div>
+        <div class="container">
+            <div class="search-mood-bar">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="What's the vibe today?">
+                    <button>Search</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Div for the map and mood selector -->
+        <div class="container text-center mt-3" id="foreground">
+            {{!-- link for get request review --}}
+            <a href="" id="reviewInfoLink"></a>
+            <div class="row">
+                <div class="col-7">
+                    <div style="border-radius: 10px;" id="map"></div>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-4 rounded-3 border border-3 secondary bg-white">
+                    {{!-- Review Panel --}}
+                    <div id="review-panel text-start">
+                        <div class="col">
+                            <div class="text-end mt-2">
+                                <form action="/map">
+                                    <input style="visibility:hidden" name="location" value={{location_name}}>
+                                    <button type="submit" class="bg-transparent text-secondary"
+                                        style="border: none"><strong>X</strong></button>
+                                </form>
+                            </div>
+                            <h4 class="mt-1 text-center" style="font-weight: bold;">{{location_name}}</h4>
+                            {{#if reviews.length}}
+                            <h5 class="mb-2"><span style="font-weight: bold;">Rating: </span>{{rating}}</h5>
+                            {{/if}}
+                            <div class="row mx-3 text-start">
+                                <h5 class="mb-1">Reviews</h5>
+                                <div class="overflow-y-scroll mr-auto" style="max-width: 100%; max-height: 300px">
+                                    {{#if reviews.length}}
+                                    {{#each reviews}}
+                                    <div class="card mx-auto my-2" style="width: 100%;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@{{this.username}}</h5>
+                                            <h6 class="card-subtitle mb-2 text-body-secondary">Rating: {{this.rating}}
+                                            </h6>
+                                            <h6 class="card-subtitle mb-2 text-body-secondary">Mood: {{this.mood_name}}
+                                            </h6>
+                                            <p class="card-text px-2 border rounded"
+                                                style="border-color: rgb(196, 196, 196);">{{this.review}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {{/each}}
+                                    {{else}}
+                                    <p>No Reviews.</p>
+                                    {{/if}}
+                                </div>
+                            </div>
+
+                            <div class="row mx-3 mt-3 text-start">
+                                <h5 class="mb-1">Write a Review</h5>
+                                <form action="/addReview" method="POST">
+                                    <input type="hidden" name="location" value={{location_name}}>
+                                    <input type="hidden" name="place_id" value={{location_id}}>
+
+                                    <label for="mood-select" class="form-label">Choose a mood for this location</label>
+                                    <select id="mood-select" class="form-select" name="mood" required>
+                                        <option value="" selected>Select a mood</option>
+                                        <option value=1>Adventure</option>
+                                        <option value=2>Cozy</option>
+                                        <option value=3>Lively</option>
+                                        <option value=4>Romantic</option>
+                                        <option value=5>Hungry</option>
+                                        <option value=6>Relaxed</option>
+                                    </select>
+
+                                    <label for="location-rating" class="form-label my-1">Rate this location from
+                                        1-5</label>
+                                    <select id="location-rating" class="form-select" name="rating" required>
+                                        <option selected value="">Select a rating</option>
+                                        <option value=1>1</option>
+                                        <option value=2>2</option>
+                                        <option value=3>3</option>
+                                        <option value=4>4</option>
+                                        <option value=5>5</option>
+                                    </select>
+
+                                    <label for="review-text" class="form-label my-1">Review</label>
+                                    <textarea maxlength="250" class="form-control" id="review-text" rows="3"
+                                        name="review" required></textarea>
+
+                                    <button type="submit" class="btn mt-3" style="background-color: #4a90e2; color:white">Submit</button>
+                                </form>
+                            </div>
+
+                            <div class="row mx-3 text-start" style="padding-bottom: 10%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Div for the map and mood selector -->
+    <script>
+        var map;
+        var service;
+        var infowindow;
+        var autocomplete;
+        var markers = [];
+
+        // Get Request for Reviews
+        function getReviewInfo(location_name, place_id) {
+            link = document.getElementById("reviewInfoLink");
+            link.setAttribute('href', '/mapInfo?location=' + location_name + '&place_id=' + place_id);
+            link.click();
+        }
+
+        // Initialize the map and autocomplete
+        function initMap() {
+            // Begin in Boulder, Colorado
+            var boulder = new google.maps.LatLng(40.015, -105.2705);
+            infowindow = new google.maps.InfoWindow();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: boulder,
+                zoom: 13
+            });
+
+            // Initialize autocomplete on search input
+            var inputField = document.getElementById('searchInput');
+            autocomplete = new google.maps.places.Autocomplete(inputField, {
+                fields: ['name', 'geometry']
+            });
+
+            // Add listener for autocomplete selection
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (place.geometry) {
+                    makeNearbySearch(place.name);
+                }
+            });
+
+            // Set up event listener for the search button
+
+
+            // Event listeners for mood buttons
+            // Event listeners for mood buttons
+            document.getElementById('cozyButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "cozy");
+            });
+
+            document.getElementById('livelyButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "lively");
+            });
+
+            document.getElementById('hungryButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "food");
+            });
+
+            document.getElementById('romanceButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "romance");
+            });
+
+            document.getElementById('adventureButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "adventurous");
+            });
+
+            document.getElementById('relaxButton').addEventListener('click', function () {
+                makeNearbySearch("boulder", "relax");
+
+            });
+        }
+
+
+        // Function to make a Nearby Search request
+        function makeNearbySearch(searchKey, mood = '') {
+            var boulder = new google.maps.LatLng(40.015, -105.2705);
+
+            var request = {
+                location: boulder,
+                radius: 80000,
+                keyword: `${searchKey} ${mood}`
+
+            };
+
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, function (results, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    clearMarkers(); // Clear existing markers
+                    var bounds = new google.maps.LatLngBounds(); // Initialize bounds
+
+                    for (var i = 0; i < results.length; i++) {
+                        createMarker(results[i], bounds);
+                    }
+
+                    // Fit the map to the bounds containing all markers
+                    map.fitBounds(bounds);
+                } else {
+                    console.error('REQUEST ERROR:', status);
+                }
+            });
+        }
+
+        // Function to create markers and extend bounds
+        function createMarker(place, bounds) {
+            if (!place.geometry || !place.geometry.location) {
+                console.error("Location is undefined for place:", place);
+                return;
+            }
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: place.geometry.location
+            });
+
+            markers.push(marker);
+
+            // Extend the bounds to include each marker's location
+            bounds.extend(place.geometry.location);
+
+            //get review info when click
+            google.maps.event.addListener(marker, 'click', function () {
+                getReviewInfo(place.name, place.place_id);
+            });
+
+            // show place name when hover
+            google.maps.event.addListener(marker, 'mouseover', function () {
+                infowindow.setContent(place.name);
+                infowindow.open(map, this);
+            });
+        }
+
+        // Function to clear existing markers
+        function clearMarkers() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
+        // Function to dynamically load the Google Maps API
+        function loadGoogleMapsAPI(apiKey) {
+            var script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
+            script.async = true;
+            script.defer = true;
+            document.body.appendChild(script);
+        }
+
+        // Fetch the API key and load Google Maps
+        fetch('/api/get-google-maps-key')
+            .then(response => response.json())
+            .then(data => {
+                loadGoogleMapsAPI(data.apiKey);
+            })
+            .catch(error => {
+                console.error('Error fetching API key:', error);
+            });
+    </script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const interBubble = document.querySelector('.interactive');
+            console.log(interBubble);
+            let curX = 0;
+            let curY = 0;
+            let tgX = 0;
+            let tgY = 0;
+
+            function move() {
+                curX += (tgX - curX) / 20;
+                curY += (tgY - curY) / 20;
+                interBubble.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+                requestAnimationFrame(() => {
+                    move();
+                });
+            }
+
+            window.addEventListener('mousemove', (event) => {
+                tgX = event.clientX;
+                tgY = event.clientY;
+            });
+
+            move();
+        });
+    </script>
+</body>
