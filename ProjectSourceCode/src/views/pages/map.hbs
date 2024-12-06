@@ -23,7 +23,7 @@
       position: fixed;
       top: 60px;
       width: 100%;
-      left: 30vh;
+      left: 27vh;
       z-index: 1; /* Ensure the search bar stays on top */
     }
 
@@ -161,7 +161,7 @@
     }
 
     #map-container {
-      margin-left: 22vh;
+      margin-left: 19vh;
       margin-top: 5vh;
       bottom: 10vh;
       position: fixed;
@@ -180,7 +180,6 @@
 </head>
 
 <body>
-  
   <div class="gradient-bg">
     <svg xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -208,6 +207,7 @@
       </div>
       
       <!-- Mood Bar on the Left -->
+      <a href="" id="reviewInfoLink"></a>
       <div class="mood-bar align-items-center">
         <button id="adventureButton">Adventure</button>
         <button id="cozyButton">Cozy</button>
@@ -215,15 +215,11 @@
         <button id="romanceButton">Romantic</button>
         <button id="hungryButton">Hungry</button>
         <button id="relaxButton">Relaxed</button>
-
       </div>
       <div id="map-container">
         <div id="map"></div>
       </div>
     </div>
-      <!-- Map -->
-      
-  </div>
   </div>
   
   <!-- Div for the map and mood selector -->
@@ -233,6 +229,13 @@
     var infowindow;
     var autocomplete;
     var markers = [];
+
+    // Get Request for Reviews
+    function getReviewInfo(location_name, place_id) {
+      link = document.getElementById("reviewInfoLink");
+      link.setAttribute('href', '/mapInfo?location=' + location_name + '&place_id=' + place_id);
+      link.click();
+    }
 
     // Initialize the map and autocomplete
     function initMap() {
@@ -286,23 +289,6 @@
       document.getElementById('relaxButton').addEventListener('click', function () {
         makeNearbySearch("boulder", "relax");
 
-      });
-
-      // Event listeners for new mood buttons
-      document.getElementById("partyButton").addEventListener("click", function () {
-        makeNearbySearch("boulder", "party");
-      });
-
-      document.getElementById("natureButton").addEventListener("click", function () {
-        makeNearbySearch("boulder", "nature");
-      });
-
-      document.getElementById("culturalButton").addEventListener("click", function () {
-        makeNearbySearch("boulder", "cultural");
-      });
-
-      document.getElementById("workoutButton").addEventListener("click", function () {
-        makeNearbySearch("boulder", "workout");
       });
     }
 
