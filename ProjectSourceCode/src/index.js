@@ -176,14 +176,14 @@ app.get('/mapInfo', (req, res) => {
     return task.batch([
       task.any(`select avg(rating) 
         from reviews inner join locations on reviews.location_id = locations.location_id
-        where reviews.location_id = $1;`, [location_id]),
+        where reviews.location_id = '${location_id}';`),
       task.any(`select username, mood_name, review, rating 
         from reviews inner join locations on reviews.location_id = locations.location_id
         inner join moods on reviews.mood_id = moods.mood_id
         inner join users on reviews.user_id = users.user_id
-        where reviews.location_id = $1;`, [location_id]),
+        where reviews.location_id = '${location_id}';`),
       task.any(`insert into locations (location_id, location_name)
-        values ($1, $2) ON CONFLICT (location_id) DO NOTHING;`, [location_id, location])
+        values ('${location_id}', '${location}') ON CONFLICT (location_id) DO NOTHING;`)
     ]);
   })
     .then(data => {
@@ -212,8 +212,8 @@ app.post('/addReview', (req, res) => {
   db.task('get-everything', task => {
     return task.batch([
       db.any(`insert into reviews (user_id, location_id, mood_id, rating, review)
-    values ($1, $2, $3, $4, $5);`, [req.session.user.user_id, location_id, mood_id, rating, review]),
-      db.any(`select * from locations where location_id = $1;`, [location_id])
+    values (${req.session.user.user_id}, '${location_id}', ${mood_id}, ${rating}, '${review}');`),
+      db.any(`select * from locations where location_id = '${location_id}';`)
     ]);
   })
     .then(data => {
