@@ -2,10 +2,21 @@
     display: flex;
     align-items: center;
 }
-
+body{
+  color: white;
+}
 .moodHeader {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: centers;
+    justify-content: center;
+}
+
+#navHeader {
+    border-color: white;       /* Sets the border color to white */
+    border-width: 1vw;         /* Sets the border width to 1vw */
+    border-style: dashed;       /* Specifies the border style (solid, dashed, etc.) */
+    border-radius: 3vw;   
+    color: white;
+    z-index:2;    /* Sets the border radius to 2vw */
 }

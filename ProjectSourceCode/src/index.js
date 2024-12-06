@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcryptjs'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
+require('dotenv').config();
 
 const hbs = handlebars.create({
   extname: 'hbs',
@@ -16,8 +17,8 @@ const hbs = handlebars.create({
 });
 
 const dbConfig = {
-  host: 'db', // the database server
-  port: 5432, // the database port
+host: 'dpg-ct76teij1k6c73b42lhg-a', 
+port: 5432, // the database port
   database: process.env.POSTGRES_DB, // the database name
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
@@ -64,11 +65,11 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login', {layout: 'main2'})
+  res.render('pages/login', { layout: 'main2' })
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register', {register: 1, layout: 'main2'});
+  res.render('pages/register', { register: 1, layout: 'main2' });
 });
 
 app.get('/test', (req, res) => {
@@ -77,7 +78,6 @@ app.get('/test', (req, res) => {
 });
 
 app.get('/api/get-google-maps-key', async (req, res) => {
-  require('dotenv').config();
   const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
   return keyFetch;
 });
@@ -94,61 +94,56 @@ app.get('/map', (req, res) => {
   });
 });
 
+
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.pwd, 10);
   const query = 'INSERT INTO users (username, pwd) VALUES ($1, $2);';
   db.any(query, [
-    req.body.username, 
+    req.body.username,
     hash
   ]).then(data => {
-    if(req.body.test){
+    if (req.body.test) {
       res.status(200).json({
-          message: "Success"
-        });
-      }
-    else{
+        message: "Success"
+      });
+    }
+    else {
       res.redirect('/login');
     }
-    })
+  })
     .catch(error => {
-      if(req.body.test){
+      if (req.body.test) {
         res.status(400).json({
           message: "Invalid input"
         });
       }
-      else{
-        res.redirect('/register');
+      else {
+        res.render('pages/register', { message: `Invalid input or username already exists.`, error: true, layout: 'main2' });
       }
     });
 })
 
 // Login POST
-app.post('/login', async (req, res) =>{
+app.post('/login', async (req, res) => {
   const hash = await bcrypt.hash(req.body.pwd, 10);
   const query = 'select * from users where username = $1 limit 1;';
   db.any(query, req.body.username).then(async user => {
     user = user[0];
-
-        // check if password from request matches with password in DB
-        const match = await bcrypt.compare(req.body.pwd, user.pwd);
-        if (!match) {
-          res.render('pages/login', {message: `Incorrect username or password.`, error: true, layout: 'main2'});
-        } else {
-            req.session.user = user;
-            req.session.save();
-            res.redirect('/map');
-        }
-    }).catch(err => {
-      console.log(err);
-      res.redirect('/register');
-    });
-});
-
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.render('pages/logout', {layout: 'main2'});
+    // check if password from request matches with password in DB
+    const match = await bcrypt.compare(req.body.pwd, user.pwd);
+    if (!match) {
+      res.render('pages/login', { message: `Incorrect username or password.`, error: true, layout: 'main2' });
+    } else {
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/map');
+    }
+  }).catch(err => {
+    console.log(err);
+    res.redirect('/register');
+  });
 });
 
 const auth = (req, res, next) => {
@@ -158,25 +153,101 @@ const auth = (req, res, next) => {
   next();
 };
 
-app.use('/map', auth);
-  app.get('/map', (req, res) => {
-    res.render('pages/map');
+app.use(auth);
+
+app.get('/profile', (req, res) => {
+  try {
+    res.status(200).json({
+      username: req.session.user.username,
+    });
+  } catch (err) {
+    console.error('Profile error:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/logout', { layout: 'main2' });
+});
+
+app.get('/api/get-google-maps-key', async (req, res) => {
+  require('dotenv').config();
+  const keyFetch = await res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
+  return keyFetch;
+});
+
+app.get('/map', (req, res) => {
+  if (req.session.user) {
+    res.render('pages/map', { username: req.session.user.username });
+  }
+  else {
+    res.redirect('login');
+  }
+});
+
+// get Reviews and Rating for location
+app.get('/mapInfo', (req, res) => {
+  const location = req.query.location;
+  const location_id = req.query.place_id;
+
+  db.task('get-everything', task => {
+    return task.batch([
+      task.any(`select avg(rating) 
+        from reviews inner join locations on reviews.location_id = locations.location_id
+        where reviews.location_id = '${location_id}';`),
+      task.any(`select username, mood_name, review, rating 
+        from reviews inner join locations on reviews.location_id = locations.location_id
+        inner join moods on reviews.mood_id = moods.mood_id
+        inner join users on reviews.user_id = users.user_id
+        where reviews.location_id = '${location_id}';`),
+      task.any(`insert into locations (location_id, location_name)
+        values ('${location_id}', '${location}') ON CONFLICT (location_id) DO NOTHING;`)
+    ]);
+  })
+    .then(data => {
+      res.render('pages/map',
+        {
+          rating: parseFloat(data[0][0].avg).toFixed(2),
+          reviews: data[1].reverse(),
+          location_name: location,
+          location_id: location_id,
+          review: 1,
+          username: req.session.user.username
+        });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+// Add Review to Location
+app.post('/addReview', (req, res) => {
+  const location_id = req.body.place_id;
+  const mood_id = req.body.mood;
+  const rating = req.body.rating;
+  const review = req.body.review;
+
+  db.task('get-everything', task => {
+    return task.batch([
+      db.any(`insert into reviews (user_id, location_id, mood_id, rating, review)
+    values (${req.session.user.user_id}, '${location_id}', ${mood_id}, ${rating}, '${review}');`),
+      db.any(`select * from locations where location_id = '${location_id}';`)
+    ]);
+  })
+    .then(data => {
+      res.redirect('/mapInfo' + '?location=' + data[1][0].location_name + '&place_id=' + location_id);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+app.get('/account', (req, res) => {
+  res.render('pages/account', {
+    username: req.session.user.username,
   });
-
-
-app.use('/profile', auth);
-
-  app.get('/profile', (req, res) => {
-    try {
-      res.status(200).json({
-        username: req.session.user.username,
-      });
-    } catch (err) {
-      console.error('Profile error:', err);
-      res.status(500).send('Internal Server Error');
-    }
-  });
-  
+});
 
 
 
