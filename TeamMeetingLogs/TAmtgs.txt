@@ -6,3 +6,6 @@
 
 11/11/2024 - 10 min
   We planned to work on test cases, add more functional code, and release notes this week.
+
+11/22/2024 - 10 min
+  We showed off our functional components and planned to work on styling of the website and making sure it looked nice before our presentation. 
