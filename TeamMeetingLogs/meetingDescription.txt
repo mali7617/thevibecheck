@@ -12,3 +12,10 @@
 11/15/2024: Worked on ensuring test cases were working on every machine while still successfully running on browser. This led to a slew of issues that needed to be fixed on multiple machines, Austin created and implemented a basic version of the map page.
 11/16/2024: Fixed issues from Friday lab and made sure all machines were capable of properly running test cases as well as running on browser, added all database table creation.
 11/17/2024: Database table creation and many branches led to issues with test cases which were fully resolved. Added search logic based on location and mood to map page, Updated ReadME, created a simple working build that now requires styling.
+11/18/2024: Began working on basic styling, also worked on fixing loading issues with the map feature.
+11/20/2024: Ran into issues with some internal logic with page navigation and certain pages not showing up or being loaded incorrectly.
+11/21/2024: Ensured that the entire team had a basic idea of the direction we wanted to take the styling process in with each of us individually creating a style and thne bringing it all together.
+11/22/2024: Began working on style full time.
+12/2/2024: Reconvened after break and viewed everyone's styles. Decided which elements we wanted to incorporate for each person's style and began coding these features in. Began work on our presentation.
+12/4/2024: Ran into severe setback with styling and formatting, worked on fixing issues with dynamic styling as well as our gradient background styling.
+12/5/2024: Spent time trying to incorporate a review system built by one of our teammates without breaking our other styles and were unsuccessful as we had the presenation the next day.
