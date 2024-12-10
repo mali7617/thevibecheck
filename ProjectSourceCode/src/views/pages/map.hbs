@@ -342,15 +342,11 @@
       // Extend the bounds to include each marker's location
       bounds.extend(place.geometry.location);
 
-      //get review info when click
+      // show location name on click
       google.maps.event.addListener(marker, 'click', function () {
-        getReviewInfo(place.name, place.place_id);
-      });
-
-      // show place name when hover
-      google.maps.event.addListener(marker, 'mouseover', function () {
         infowindow.setContent(place.name);
         infowindow.open(map, this);
+        // getReviewInfo(place.name, place.place_id);
       });
     }
 
